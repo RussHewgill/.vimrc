@@ -1,0 +1,14 @@
+
+
+
+background no
+out_to_console yes
+out_to_x no
+double_buffer yes
+update_interval 1.0
+total_run_times 0
+use_spacer none
+ 
+TEXT
+
+^fg(\#dddddd)^ca(1, exec ~/bin/pause)^ca(3, xdotool key super+shift+p)${exec ~/bin/tunes} ^ca()^ca()^fg(\#5c5c5c)^r(2x34)^bg(\#dddddd)^fg(\#171616)${execi 3 ~/bin/musicprogress}^bg()^fg(\#5c5c5c)^r(2x34)^fg() ${exec amixer get Master -M | grep -oE "[[:digit:]]*%"} ^fg(\#5c5c5c)^r(2x34)^fg()^ca(1, exec gsimplecal) ${time %F }^fg(\#5c5c5c)^r(2x34)^fg() ${time %I:%M:%S} ^fg(\#5c5c5c)^r(2x34)^fg()^ca()
