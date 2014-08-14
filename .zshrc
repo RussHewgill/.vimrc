@@ -133,8 +133,9 @@ RPS1='$(git_prompt_string) %{$fg[white]%}%M%{$reset_color%}'
 
 # }}}
 
-
-PROMPT='[%{$fg[green]%}%~%{$reset_color%}] $ '
+#TODO: notes right of directory
+PROMPT='[%{$fg[green]%}%~%{$reset_color%}] 
+%T $ '
 #RPROMPT='%M'
 
 # Keybinds {{{
