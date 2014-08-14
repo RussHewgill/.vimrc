@@ -22,6 +22,7 @@ Plugin 'godlygeek/tabular'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'Shougo/neocomplcache.vim'
 Plugin 'eagletmt/neco-ghc'
+Plugin 'https://github.com/raichoo/haskell-vim'
 
 "Plugin 'davidhalter/jedi-vim'
 "Plugin 'michaeljsmith/vim-indent-object'
@@ -70,7 +71,7 @@ set backspace=indent,eol,start
 set autoindent
 set ruler
 set mouse=a
-set history=1000
+set history=5000
 
 filetype plugin on
 filetype indent on
@@ -149,7 +150,7 @@ if has("gui_running")
     "let g:airline_theme='molokai'
     colorscheme badwolf
 
-    set guifont=Inconsolata\ Medium\ 12
+    set guifont=Inconsolata\ Medium\ 14
     set guioptions-=T
     set guioptions-=e
     set guioptions+=c
@@ -265,17 +266,23 @@ nnoremap ZX zO
 " neco-ghc / neocompl
 " {{{
 
-setlocal omnifunc=necoghc#omnifunc
 let g:neocomplcache_enable_at_startup = 1
+"autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 
-let g:neocomplcache_disable_auto_complete = 1
+let g:neocomplcache_enable_ignore_case = 1
+let g:neocomplcache_enable_smart_case = 1
+let g:neocomplcache_enable_auto_select = 1
+let g:neocomplcache_enable_fuzzy_completion = 1
+let g:neocomplcache_enable_camel_case_completion = 1
+let g:neocomplcache_enable_underbar_completion = 1
 
 " }}}
 
 "Jedi-vim
 "{{{
 
-
+"autocmd FileType python setlocal completeopt-=preview
+"let g:jedi#popup_on_dot = 0
 
 "}}}
 
@@ -346,7 +353,7 @@ augroup end
 au BufNewFile,BufRead *.fish set filetype=sh
 
 " change this if i ever need to use perl
-au BufNewFile,BufRead *.pl set filetype=prolog
+"au BufNewFile,BufRead *.pl set filetype=prolog
 
 " }}}
 
