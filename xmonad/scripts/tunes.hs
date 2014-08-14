@@ -28,8 +28,8 @@ main = do
             let (playing,_,_,_) = status
 
             case playing of
-                0 -> putStrLn $ artist ++ " :: " ++ title
-                _ -> putStrLn $ ":" ++ artist ++ " :: " ++ title ++ ":"
+                0 -> putStrLn $ artist ++ " :: " ++ (take 45 title)
+                _ -> putStrLn $ ":" ++ artist ++ " :: " ++ (take 45 title) ++ ":"
             
             return ()
 

@@ -1,5 +1,4 @@
 
-
 {-# LANGUAGE OverloadedStrings #-}
 
 import Data.Int
@@ -29,14 +28,14 @@ process (Just pos) (Just md) = putStrLn $ "^p(-2)^p(_TOP)^r(3x" ++ show (30 - pe
 nosong = putStrLn "^r(3x30)"
 
 getx :: IsVariant a => Client -> MemberName -> IO (Maybe a)
-getx client me = callmethodbetter client me >>= \x -> return $ parse x
+getx client me = callmethod client me >>= \x -> return $ parse x
 
 parse :: IsVariant a => Maybe MethodReturn -> Maybe a
 parse Nothing = Nothing
 parse (Just r) = fromVariant (head . methodReturnBody $ r)
 
-callmethodbetter :: Client -> MemberName -> IO (Maybe MethodReturn)
-callmethodbetter client me = do
+callmethod :: Client -> MemberName -> IO (Maybe MethodReturn)
+callmethod client me = do
         r <- call client (methodCall "/Player" "org.freedesktop.MediaPlayer" me )
                     { methodCallDestination = Just "org.mpris.MediaPlayer2.clementine"
                     , methodCallInterface = Just "org.freedesktop.MediaPlayer" }

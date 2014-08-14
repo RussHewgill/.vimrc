@@ -27,6 +27,7 @@ import qualified XMonad.StackSet as W
 import XMonad.Util.WindowProperties
 import XMonad.Layout.IndependentScreens
 import XMonad.Layout.Reflect
+import XMonad.Util.Paste
 
 import System.IO
 import System.Exit
@@ -136,7 +137,7 @@ emptywsfg = "#888888"
 -- Managehook {{{
 
 mymanagehook = composeAll . concat $
-    [ [className =? "Firefox"       --> doShift (wss!!0) ]
+    [ [className =? "Firefox"  <&&> resource =? "Navigator" --> doShift (wss!!0) ]
     , [className =? "Firefox"       --> doF W.swapMaster ]
     , [className =? "Firefox" <&&> resource /=? "Navigator" --> doFloat]
     , [className =? "Clementine"    --> doShift (wss!!2) ]
@@ -144,6 +145,7 @@ mymanagehook = composeAll . concat $
     {-, [className =? "Gvim"          --> doShift (wss!!1) ]-}
     , [className =? "Gvim"          --> doF W.swapMaster ]
     , [className =? "Gmrun"         --> doSideFloat CW   ]
+    {-, [className =? "Gmrun"         --> doF W.focusUp   ]-}
     , [className =? "Hexchat"       --> doShift (wss!!3) ]
     , [className =? "Xmessage"      --> doFloat          ]
     , [className =? "Gsimplecal"    --> placeHook (withGaps (0,0,30,0) $ underMouse (0,0)) ]
@@ -151,11 +153,18 @@ mymanagehook = composeAll . concat $
     , [isFullscreen                 --> (doF W.focusDown <+> doFullFloat)]
     , [isDialog                     --> doFloat          ]
     , [fmap (not . (isInfixOf c)) title --> doF avoidMaster | c <- hiPriority ]
-    , [className =? "Gimp"          --> doShift (wss!!4) ]
+    , [className =? "Gimp"          --> doShift (wss!!4) ] 
+    , [fmap (isInfixOf c) title --> doF W.focusUp | c <- pwds ]
     ]
     where 
         -- These windows go to master pane when started
         hiPriority = ["Firefox", "Gvim", "Hexchat", "Truecrypt"]
+        pwds = [ "Enter password", "Administrator privileges", "Select a Partition or Device" ]
+
+test prog cmd = allWithProperty (ClassName prog) >>=
+                \x -> if (null x)
+                    then spawn cmd
+                    else return ()
 
 -- pure function for use with doF
 -- causes new windows to be inserted below master
@@ -171,6 +180,7 @@ avoidMaster = W.modify' $ \c -> case c of
 mylayoutHook =  smartBorders
                 $ avoidStruts
                 $ onWorkspace (wss!!1) vimlayout 
+                $ onWorkspace (wss!!3) vimlayout 
                 $ onWorkspace (wss!!0) firefoxlayout 
                 $ mainlayout
 
@@ -216,10 +226,10 @@ mywsso = filter ((=='0') . last) wss
 -- important:   -p,     don't timeout
 --              -e ''   disable close on right click
 --              -y -1
-mydzenclockl = "conky | dzen2 -xs 1 -ta r -x 1200 " ++ dzenfont ++ dzenOpts
+mydzenclockl = "conky | dzen2 -xs 1 -ta r -x 1000 " ++ dzenfont ++ dzenOpts
 mydzenclockr = "conky | dzen2 -xs 2 -ta r -x 800 " ++ dzenfont ++ dzenOpts
 
-mydzenl   = "dzen2 -xs 1 -w 1200 -ta l " ++ dzenfont ++ dzenOpts
+mydzenl   = "dzen2 -xs 1 -w 1000 -ta l " ++ dzenfont ++ dzenOpts
 mydzenr   = "dzen2 -xs 2 -w 800 -ta l " ++ dzenfont ++ dzenOpts
 
 dzenOpts  = "-p -e '' -h 30 -y -1 -fg '" ++ fg ++ "' -bg '" ++ bg ++ "'"
@@ -335,28 +345,28 @@ mykeysonehead = mykeysP ++
 
 -- }}}
 
-
 -- standard keys {{{
 
 
 --required for dzen clickables: M-n,M-m,M-S-p, and M-# keys above
 mykeysP =
         [
-        -- Volume
+            -- Volume
           ("M-v v" , spawn "amixer -q set Master 2%- unmute")
         , ("M-v f" , spawn "amixer -q set Master 2%+ unmute")
         , ("<XF86AudioLowerVolume>" , spawn "amixer -q set Master 2%- unmute")
         , ("<XF86AudioRaiseVolume>" , spawn "amixer -q set Master 2%+ unmute")
         , ("<XF86AudioMute>" , spawn "amixer -q set Master 2%+ unmute")
         , ("M-o" , spawn "pause")
-        -- Launch Apps
+            -- Launch Apps
         , ("M-d" , spawn "gmrun")
         , ("M-t" , spawn "terminator")
             --TODO: stop from launching more windows
         , ("M-g" , singlespawn "Firefox" "firefox-nightly")
             --TODO: set layout to 50/50 columns
             --TODO: more elegant pls //if current WS is empty, don't move
-        , ("M-e" , nextEmpty "thunar" )
+        {-, ("M-e" , nextEmpty "thunar" )-}
+        , ("M-e" , spawn "thunar" )
         , ("M-s" , spawn "gvim")
         , ("M-c" , spawn "gsimplecal")
             -- Keyboard Scrolling
@@ -394,7 +404,10 @@ mykeysP =
         , ("M-S-<End>" , io (exitWith  ExitSuccess))
             -- Scratchpad Terminal
         , ("M-x" , scratchpadSpawnActionCustom "terminator -c scratchpad" )
+        , ("<F8>" , spawn "~/bin/autoclick.sh" )
         ]
+
+
 
 notKeysP = 
     [
