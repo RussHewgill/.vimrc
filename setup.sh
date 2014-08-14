@@ -9,7 +9,10 @@ ln -rs .zshrc ~/.zshrc
 if [ ! -d "$HOME/.vim" ]; then
     mkdir ~/.vim 
 fi
-git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+
+if [ ! -d "$HOME/.vim" ]; then
+    git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim 
+fi
 
 
 
