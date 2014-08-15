@@ -129,13 +129,13 @@ local git_where="$(parse_git_branch)"
 }
  
 # Set the right-hand prompt
-RPS1='$(git_prompt_string) %{$fg[white]%}%M%{$reset_color%}'
+RPS1='$(git_prompt_string) '
 
 # }}}
 
 #TODO: notes right of directory
-PROMPT='[%{$fg[green]%}%~%{$reset_color%}] 
-%n %{$fg[white]%}$%{$reset_color%} '
+PROMPT='%{$fg[white]%}%n@%M%{$reset_color%} [%{$fg[green]%}%~%{$reset_color%}] 
+%{$fg[white]%}$%{$reset_color%} '
 #RPROMPT='%M'
 
 # Keybinds {{{
