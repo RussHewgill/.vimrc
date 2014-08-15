@@ -195,7 +195,7 @@ firefoxlayout = reflectHoriz ff ||| Full
     where
         ff = Tall  { tallNMaster = 1, tallRatio=(4%5), tallRatioIncrement=(3%100) }
 
-vimlayout = Mirror Tall { tallNMaster = 1, tallRatio=(3%4), tallRatioIncrement=(3%100) } 
+vimlayout = Mirror Tall { tallNMaster = 1, tallRatio=(3%5), tallRatioIncrement=(3%100) } 
                 ||| Tall { tallNMaster = 1, tallRatio=(1%2), tallRatioIncrement=(3%100) }
 
 columns = Tall { tallNMaster = 1, tallRatio=(1%2), tallRatioIncrement=(3%100) }
