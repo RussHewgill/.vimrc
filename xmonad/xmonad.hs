@@ -407,8 +407,6 @@ mykeysP =
         , ("<F8>" , spawn "~/bin/autoclick.sh" )
         ]
 
-
-
 notKeysP = 
     [
     ("M-p")
