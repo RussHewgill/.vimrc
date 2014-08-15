@@ -1,26 +1,26 @@
 # vim: set foldlevel=0 :
 
-# oh-my-zsh stuff {{{
+# oh-my-zsh stuff (commented out) {{{
 # Path to your oh-my-zsh installation.
-ZSH=/usr/share/oh-my-zsh/
+#ZSH=/usr/share/oh-my-zsh/
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="robbyrussell"
+#ZSH_THEME="robbyrussell"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
 # Uncomment the following line to disable bi-weekly auto-update checks.
-DISABLE_AUTO_UPDATE="true"
+#DISABLE_AUTO_UPDATE="true"
 
 # Uncomment the following line to change how often to auto-update (in days).
 # export UPDATE_ZSH_DAYS=13
 
 # Uncomment the following line to disable colors in ls.
-DISABLE_LS_COLORS="true"
+#DISABLE_LS_COLORS="true"
 
 # Uncomment the following line to disable auto-setting terminal title.
 # DISABLE_AUTO_TITLE="true"
@@ -48,11 +48,12 @@ DISABLE_LS_COLORS="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+#plugins=(git)
 
-source $ZSH/oh-my-zsh.sh
+#source $ZSH/oh-my-zsh.sh
 
 # }}}
+
 
 autoload -U promptinit
 promptinit
@@ -128,10 +129,14 @@ local git_where="$(parse_git_branch)"
 [ -n "$git_where" ] && echo "$GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX%{$fg[yellow]%}${git_where#(refs/heads/|tags/)}$GIT_PROMPT_SUFFIX"
 }
  
-# Set the right-hand prompt
-RPS1='$(git_prompt_string) '
+#ref: http://techanic.net/2012/12/30/my_git_prompt_for_zsh.html
+
+
 
 # }}}
+
+# Set the right-hand prompt
+RPS1='$(git_prompt_string) '
 
 #TODO: notes right of directory
 PROMPT='%{$fg[white]%}%n@%M%{$reset_color%} [%{$fg[green]%}%~%{$reset_color%}] 
@@ -176,6 +181,9 @@ if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
     zle -N zle-line-init
     zle -N zle-line-finish
 fi
+
+zstyle ':prezto:module:editor' key-bindings 'emacs'
+
 # }}}
 
 setopt nobeep
@@ -202,6 +210,10 @@ alias ktray='pkill nm-applet & pkill trayer'
 alias ipy='ipython3'
 alias py='python3'
 alias server='python3 -m http.server 8080'
+
+function pypass () {
+    python -c "import crypt, getpass, pwd; print(crypt.crypt('$1', '\$6\$saltsalt\$'))"
+}
 
 alias hman='man --html=firefox-nightly'
 

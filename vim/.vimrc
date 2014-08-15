@@ -159,16 +159,16 @@ if has("gui_running")
     set guioptions-=r
     set guioptions-=l
     set guioptions-=b
-    "set t_Co=256
     set guitablabel=%M\ %t
 else
-    let g:solarized_termtrans=1
-    let g:solarized_contrast="high"
-    let g:solarized_visibility="medium"
+    set t_Co=256
+    "let g:solarized_termtrans=1
+    "let g:solarized_contrast="high"
+    "let g:solarized_visibility="medium"
     "let g:solarized_termcolors=256
     "let g:airline_theme='molokai'
-    "colorscheme vividchalk
-    colorscheme solarized
+    colorscheme badwolf
+    "colorscheme solarized
 endif
 
 set encoding=utf8
