@@ -6,6 +6,9 @@ ln -rs vim/.vimrc ~/.vimrc
 mv ~/.zshrc{,.bak}
 ln -rs .zshrc ~/.zshrc
 
+mv ~/.zpreztorc{,.bak}
+ls -s .zpreztorc ~/.zpreztorc
+
 if [ ! -d "$HOME/.vim" ]; then
     mkdir ~/.vim 
 fi
