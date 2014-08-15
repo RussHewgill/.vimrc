@@ -201,6 +201,7 @@ alias ktray='pkill nm-applet & pkill trayer'
 
 alias ipy='ipython3'
 alias py='python3'
+alias server='python3 -m http.server 8080'
 
 alias hman='man --html=firefox-nightly'
 
