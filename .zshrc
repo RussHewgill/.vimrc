@@ -196,7 +196,7 @@ set -U BROWSER 'firefox-nightly'
 
 # aliases {{{
 
-alias ls='ls -a --group-directories-first --color=always'
+alias ls='ls --group-directories-first --color=always'
 alias lsd='ls -d */'
 alias :q='exit'
 
