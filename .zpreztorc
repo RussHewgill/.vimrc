@@ -1,24 +1,12 @@
 
-
-# prezto {{{
-
 zstyle ':prezto:load' pmodule \
     'environment' \
     'terminal' \
     'history' \
-    'history-substring-search' \
     'editor' \
     'spectrum' \
     'archive' \
+    'history-substring-search' \
     'completion' \
     'syntax-highlighting'
-
-# }}}
-
-
-
-
-
-
-
 
