@@ -202,6 +202,8 @@ set -U BROWSER 'firefox-nightly'
 
 # aliases {{{
 
+alias sudoedit='sudo -E vim'
+
 alias ls='ls --group-directories-first --color=always'
 alias lsd='ls -d */'
 alias :q='exit'
