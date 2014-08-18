@@ -327,6 +327,9 @@ let $PATH=$PATH . ':/home/russ/.cabal/bin'
 " Save on losing focus
 au FocusLost * :wa
 
+" Readonly file saving
+command W w !sudo tee % > /dev/null
+
 "" Return to last edit position when opening files (You want this!)
 "autocmd BufReadPost *
      "\ if line("'\"") > 0 && line("'\"") <= line("$") |
