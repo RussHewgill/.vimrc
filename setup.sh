@@ -2,9 +2,9 @@
 
 ln -s ~/gitrepos/Configs/vim/.vimrc ~/.vimrc
 
-ln -s ~/Desktop/Configs/.zshrc ~/.zshrc
+ln -s ~/gitrepos/Configs/.zshrc ~/.zshrc
 
-ln -s ~/Desktop/Configs/.zpreztorc ~/.zpreztorc
+ln -s ~/gitrepos/Configs/.zpreztorc ~/.zpreztorc
 
 if [ ! -d "$HOME/.vim" ]; then
     mkdir ~/.vim 
