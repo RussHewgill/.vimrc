@@ -240,6 +240,9 @@ alias dmesg='dmesg -HL'
 
 alias rm='rm -I'  
 
+alias aptin='sudo aptitude install'
+alias apt='sudo aptitude'
+
 alias pacin='sudo pacman -S'
 alias pacupg='sudo pacman -Syu'
 alias pacins='sudo pacman -U'
