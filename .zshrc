@@ -58,6 +58,8 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
+source "${ZDOTDIR:-$HOME}/.zprezto/modules/syntax-highlighting/external/zsh-syntax-highlighting.zsh"
+
 autoload -U promptinit
 promptinit
 
