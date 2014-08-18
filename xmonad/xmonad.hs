@@ -152,7 +152,8 @@ mymanagehook = composeAll . concat $
     , [isFullscreen                 --> doFullFloat      ]
     , [isFullscreen                 --> (doF W.focusDown <+> doFullFloat)]
     , [isDialog                     --> doFloat          ]
-    , [fmap (not . (isInfixOf c)) title --> doF avoidMaster | c <- hiPriority ]
+    {-, [(fmap (not . (isInfixOf c)) title --> doF avoidMaster | c <- hiPriority ]-}
+    , [(fmap (isInfixOf c) title <&&> (qnot isDialog)) --> doF avoidMaster | c <- hiPriority ]
     , [className =? "Gimp"          --> doShift (wss!!4) ] 
     , [fmap (isInfixOf c) title --> doF W.focusUp | c <- pwds ]
     ]
@@ -160,6 +161,11 @@ mymanagehook = composeAll . concat $
         -- These windows go to master pane when started
         hiPriority = ["Firefox", "Gvim", "Hexchat", "Truecrypt"]
         pwds = [ "Enter password", "Administrator privileges", "Select a Partition or Device" ]
+
+qnot :: Query Bool -> Query Bool
+qnot prop = do 
+    r <- prop
+    return $ not $ r
 
 test prog cmd = allWithProperty (ClassName prog) >>=
                 \x -> if (null x)

@@ -17,7 +17,6 @@ if [ ! -d "$HOME/.vim" ]; then
     git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim 
 fi
 
-yaourt prezto-git
 
 
 
