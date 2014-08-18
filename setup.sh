@@ -1,13 +1,10 @@
 #!/bin/bash
 
-mv ~/.vimrc{,.bak}
-ln -rs vim/.vimrc ~/.vimrc
+ln -s ~/gitrepos/Configs/vim/.vimrc ~/.vimrc
 
-mv ~/.zshrc{,.bak}
-ln -rs .zshrc ~/.zshrc
+ln -s ~/Desktop/Configs/.zshrc ~/.zshrc
 
-mv ~/.zpreztorc{,.bak}
-ln -rs .zpreztorc ~/.zpreztorc
+ln -s ~/Desktop/Configs/.zpreztorc ~/.zpreztorc
 
 if [ ! -d "$HOME/.vim" ]; then
     mkdir ~/.vim 
