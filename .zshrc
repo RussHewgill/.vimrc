@@ -204,6 +204,8 @@ set -U BROWSER 'firefox-nightly'
 
 alias sudoedit='sudo -E vim'
 
+alias bdf='btrfs filesystem df ~/files'
+
 alias ls='ls --group-directories-first --color=always'
 alias lsd='ls -d */'
 alias :q='exit'
@@ -252,4 +254,3 @@ alias pacre='sudo pacman -R'
 alias pacse='sudo pacman -Ss | grep'
 
 # }}}
-

@@ -65,7 +65,7 @@ conf = withNavigation2DConfig defaultNavigation2DConfig
           manageHook  = mymanagehook <+> manageScratchPad 
                         <+> manageHook defaultConfig <+> manageDocks 
         , layoutHook  = mylayoutHook
-        , terminal    = "terminator"
+        , terminal    = "roxterm"
         , modMask     = mod4Mask
         , borderWidth = 0
         , workspaces  = wss
@@ -151,9 +151,9 @@ mymanagehook = composeAll . concat $
     , [className =? "Gsimplecal"    --> placeHook (withGaps (0,0,30,0) $ underMouse (0,0)) ]
     , [isFullscreen                 --> doFullFloat      ]
     , [isFullscreen                 --> (doF W.focusDown <+> doFullFloat)]
-    , [isDialog                     --> doFloat          ]
-    {-, [(fmap (not . (isInfixOf c)) title --> doF avoidMaster | c <- hiPriority ]-}
-    , [(fmap (isInfixOf c) title <&&> (qnot isDialog)) --> doF avoidMaster | c <- hiPriority ]
+    , [(fmap (not . (isInfixOf c)) title) --> doF avoidMaster | c <- hiPriority ]
+    , [isDialog                     --> (doFloat <+> doF W.focusUp) ]
+    {-, [(fmap (isInfixOf c) title <&&> (qnot isDialog)) --> doF avoidMaster | c <- hiPriority ]-}
     , [className =? "Gimp"          --> doShift (wss!!4) ] 
     , [fmap (isInfixOf c) title --> doF W.focusUp | c <- pwds ]
     ]
@@ -366,7 +366,7 @@ mykeysP =
         , ("M-o" , spawn "pause")
             -- Launch Apps
         , ("M-d" , spawn "gmrun")
-        , ("M-t" , spawn "terminator")
+        , ("M-t" , spawn "roxterm")
             --TODO: stop from launching more windows
         , ("M-g" , singlespawn "Firefox" "firefox-nightly")
             --TODO: set layout to 50/50 columns
@@ -409,7 +409,7 @@ mykeysP =
         , ("M-q" , spawn myrestart)
         , ("M-S-<End>" , io (exitWith  ExitSuccess))
             -- Scratchpad Terminal
-        , ("M-x" , scratchpadSpawnActionCustom "terminator -c scratchpad" )
+        , ("M-x" , scratchpadSpawnActionCustom "roxterm --separate --name scratchpad" )
         , ("<F8>" , spawn "~/bin/autoclick.sh" )
         ]
 
