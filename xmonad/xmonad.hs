@@ -28,6 +28,8 @@ import XMonad.Util.WindowProperties
 import XMonad.Layout.IndependentScreens
 import XMonad.Layout.Reflect
 import XMonad.Util.Paste
+import XMonad.Hooks.EwmhDesktops
+import XMonad.Layout.Grid
 
 import System.IO
 import System.Exit
@@ -53,7 +55,7 @@ main = do
         else do
         rdzenproc <- spawnPipe $ mydzenr
         spawn $ mydzenclockr
-        xmonad $ runbars dualheadconf ldzenproc (Just rdzenproc)
+        xmonad $ ewmh $ runbars dualheadconf ldzenproc (Just rdzenproc)
 
 -- }}}
 
@@ -69,7 +71,8 @@ conf = withNavigation2DConfig defaultNavigation2DConfig
         , modMask     = mod4Mask
         , borderWidth = 0
         , workspaces  = wss
-        , focusFollowsMouse = True
+        , focusFollowsMouse = True 
+        , handleEventHook = handleEventHook defaultConfig <+> fullscreenEventHook
         } 
 
 dualheadconf = conf `additionalKeysP` mykeysdualhead `removeKeysP` notKeysP
@@ -203,6 +206,7 @@ firefoxlayout = reflectHoriz ff ||| Full
 
 vimlayout = Mirror Tall { tallNMaster = 1, tallRatio=(3%5), tallRatioIncrement=(3%100) } 
                 ||| Tall { tallNMaster = 1, tallRatio=(1%2), tallRatioIncrement=(3%100) }
+                ||| Grid
 
 columns = Tall { tallNMaster = 1, tallRatio=(1%2), tallRatioIncrement=(3%100) }
 
@@ -346,8 +350,8 @@ mykeysdualhead = mykeysP ++ [
 mykeysonehead = mykeysP ++
             [ (otherModMasks ++ "M-" ++ [key], action tag)
             | (tag, key) <- zip wss ['1'..'9']
-            , (otherModMasks, action) <- [  ("", windows . W.view)
-                                            , ("S-", toggleOrView ) ]]
+            , (otherModMasks, action) <- [  ("", toggleOrView )
+                                            , ("S-", windows . W.shift ) ]]
 
 -- }}}
 
@@ -368,7 +372,8 @@ mykeysP =
         , ("M-d" , spawn "gmrun")
         , ("M-t" , spawn "roxterm")
             --TODO: stop from launching more windows
-        , ("M-g" , singlespawn "Firefox" "firefox-nightly")
+        {-, ("M-g" , singlespawn "Firefox" "firefox-nightly")-}
+        , ("M-g" , singlespawn "Firefox" "firefox")
             --TODO: set layout to 50/50 columns
             --TODO: more elegant pls //if current WS is empty, don't move
         {-, ("M-e" , nextEmpty "thunar" )-}
@@ -405,6 +410,7 @@ mykeysP =
             -- folder and starts i3lock
         , ("M-<Pause>" , spawn "~/.lockscreen.sh; systemctl suspend")
         , ("M-<End>"   , spawn "~/.lockscreen.sh")
+        , ("M-<Delete>"   , spawn "~/.lockscreen.sh")
         , ("M-S-q" , spawn $ "pkill dzen2")
         , ("M-q" , spawn myrestart)
         , ("M-S-<End>" , io (exitWith  ExitSuccess))

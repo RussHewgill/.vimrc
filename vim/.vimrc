@@ -23,6 +23,7 @@ Plugin 'Lokaltog/vim-easymotion'
 Plugin 'Shougo/neocomplcache.vim'
 Plugin 'eagletmt/neco-ghc'
 Plugin 'https://github.com/raichoo/haskell-vim'
+Plugin 'https://github.com/kien/rainbow_parentheses.vim'
 
 "Plugin 'davidhalter/jedi-vim'
 "Plugin 'michaeljsmith/vim-indent-object'
@@ -61,9 +62,9 @@ filetype plugin indent on    " required
 "
 "{{{
 
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
 set expandtab
 set smarttab
 set number
@@ -265,6 +266,18 @@ nnoremap ZX zO
 "Plugin Settings
 "{{{
 
+" Rainbow Parens 
+" {{{
+
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+"au Syntax * RainbowParenthesesLoadBraces
+au Syntax * if &ft != 'haskell' | RainbowParenthesesLoadBraces
+
+
+" }}}
+
 " neco-ghc / neocompl
 " {{{
 
@@ -328,7 +341,7 @@ let $PATH=$PATH . ':/home/russ/.cabal/bin'
 au FocusLost * :wa
 
 " Readonly file saving
-command W w !sudo tee % > /dev/null
+command! W w !sudo tee % > /dev/null
 
 "" Return to last edit position when opening files (You want this!)
 "autocmd BufReadPost *

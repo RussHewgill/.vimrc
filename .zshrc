@@ -194,7 +194,7 @@ zstyle ':prezto:module:editor' key-bindings 'emacs'
 setopt nobeep
 setopt AUTO_CD
 
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH:/home/russ/.cabal/bin
 export LANG=en_US.UTF-8
 
 
@@ -209,6 +209,14 @@ alias bdf='btrfs filesystem df ~/files'
 alias ls='ls --group-directories-first --color=always'
 alias lsd='ls -d */'
 alias :q='exit'
+
+function shh () {
+    ssh -t $1 'tmux has-session && tmux attach || tmux'
+}
+
+function calc () {
+    bc -l <<< "$@"
+}
 
 alias hask='clear; ghci'
 alias hhask='cd ~/programs/haskell/; clear; ghci'
