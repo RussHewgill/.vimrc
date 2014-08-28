@@ -366,7 +366,8 @@ mykeysP =
         , ("M-v f" , spawn "amixer -q set Master 2%+ unmute")
         , ("<XF86AudioLowerVolume>" , spawn "amixer -q set Master 2%- unmute")
         , ("<XF86AudioRaiseVolume>" , spawn "amixer -q set Master 2%+ unmute")
-        , ("<XF86AudioMute>" , spawn "amixer -q set Master 2%+ unmute")
+        {-, ("<XF86AudioMute>" , spawn "amixer -q set Master 2%+ unmute")-}
+        , ("<XF86AudioMute>" , spawn "amixer set Master toggle")
         , ("M-o" , spawn "pause")
             -- Launch Apps
         , ("M-d" , spawn "gmrun")
@@ -416,7 +417,7 @@ mykeysP =
         , ("M-S-<End>" , io (exitWith  ExitSuccess))
             -- Scratchpad Terminal
         , ("M-x" , scratchpadSpawnActionCustom "roxterm --separate --name scratchpad" )
-        , ("<F8>" , spawn "~/bin/autoclick.sh" )
+        {-, ("<F8>" , spawn "~/bin/autoclick.sh" )-}
         ]
 
 notKeysP = 

@@ -233,6 +233,8 @@ function pypass () {
     python -c "import crypt, getpass, pwd; print(crypt.crypt('$1', '\$6\$saltsalt\$'))"
 }
 
+alias addon-sdk="cd /opt/addon-sdk && source bin/activate; cd -"
+
 alias hman='man --html=firefox-nightly'
 
 alias vi='vim'
