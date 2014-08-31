@@ -225,6 +225,8 @@ alias xmds='cd ~/.xmonad; clear; ghci xmonad.hs'
 alias tray='trayer --widthtype pixel --width 200 --heighttype pixel --height 30 --expand false --SetDockType false & nm-applet &> /dev/null &'
 alias ktray='pkill nm-applet & pkill trayer'
 
+alias vbm='VBoxManage'
+
 alias ipy='ipython3'
 alias py='python3'
 alias server='python3 -m http.server 8080'
