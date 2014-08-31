@@ -243,7 +243,8 @@ mydzenl   = "dzen2 -xs 1 -w 1000 -ta l " ++ dzenfont ++ dzenOpts
 mydzenr   = "dzen2 -xs 2 -w 800 -ta l " ++ dzenfont ++ dzenOpts
 
 dzenOpts  = "-p -e '' -h 30 -y -1 -fg '" ++ fg ++ "' -bg '" ++ bg ++ "'"
-dzenfont = " -fn '-*-ubuntu-*-*-*-*-*-140-*-*-*-*-*-*' "
+{-dzenfont = " -fn '-*-ubuntu-*-*-*-*-*-140-*-*-*-*-*-*' "-}
+dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-140-*-*-*-*-*-*' "
 
 -- }}}
 

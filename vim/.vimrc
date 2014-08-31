@@ -23,7 +23,7 @@ Plugin 'Lokaltog/vim-easymotion'
 Plugin 'Shougo/neocomplcache.vim'
 Plugin 'eagletmt/neco-ghc'
 Plugin 'https://github.com/raichoo/haskell-vim'
-Plugin 'https://github.com/kien/rainbow_parentheses.vim'
+"Plugin 'https://github.com/kien/rainbow_parentheses.vim'
 
 "Plugin 'davidhalter/jedi-vim'
 "Plugin 'michaeljsmith/vim-indent-object'
@@ -269,11 +269,11 @@ nnoremap ZX zO
 " Rainbow Parens 
 " {{{
 
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
+"au VimEnter * RainbowParenthesesToggle
+"au Syntax * RainbowParenthesesLoadRound
+"au Syntax * RainbowParenthesesLoadSquare
 "au Syntax * RainbowParenthesesLoadBraces
-au Syntax * if &ft != 'haskell' | RainbowParenthesesLoadBraces
+"au Syntax * if &ft != 'haskell' | RainbowParenthesesLoadBraces
 
 
 " }}}
