@@ -269,6 +269,9 @@ man () {
 
 alias rm='rm -I'  
 
+alias yum='sudo yum'
+alias yumin='sudo yum install'
+
 alias aptin='sudo aptitude install'
 alias apt='sudo aptitude'
 alias aptup='sudo aptitude update'
