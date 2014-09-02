@@ -236,10 +236,10 @@ mywsso = filter ((=='0') . last) wss
 -- important:   -p,     don't timeout
 --              -e ''   disable close on right click
 --              -y -1
-mydzenclockl = "conky | dzen2 -xs 1 -ta r -x 1000 " ++ dzenfont ++ dzenOpts
+mydzenclockl = "conky | dzen2 -xs 1 -ta r -x 600 " ++ dzenfont ++ dzenOpts
 mydzenclockr = "conky | dzen2 -xs 2 -ta r -x 800 " ++ dzenfont ++ dzenOpts
 
-mydzenl   = "dzen2 -xs 1 -w 1000 -ta l " ++ dzenfont ++ dzenOpts
+mydzenl   = "dzen2 -xs 1 -w 600 -ta l " ++ dzenfont ++ dzenOpts
 mydzenr   = "dzen2 -xs 2 -w 800 -ta l " ++ dzenfont ++ dzenOpts
 
 dzenOpts  = "-p -e '' -h 30 -y -1 -fg '" ++ fg ++ "' -bg '" ++ bg ++ "'"
