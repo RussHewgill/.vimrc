@@ -66,6 +66,10 @@ promptinit
 export EDITOR='vim'
 export JAVA_HOME=/opt/java/
 
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^x^e' edit-command-line
+
 # Git Prompt {{{
 
 # Adapted from code found at <https://gist.github.com/1712320>.
