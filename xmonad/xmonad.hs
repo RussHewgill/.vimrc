@@ -372,12 +372,12 @@ mykeysP =
         , ("M-o" , spawn "pause")
             -- Launch Apps
         , ("M-d" , spawn "gmrun")
-        , ("M-s t" , spawn "roxterm")
+        , ("M-t" , spawn "roxterm")
             --TODO: stop from launching more windows
-        , ("M-s g" , singlespawn "Firefox" "firefox")
-        , ("M-s e" , spawn "thunar" )
-        , ("M-s s" , spawn "gvim")
-        , ("M-s c" , spawn "timeout 5 gsimplecal")
+        , ("M-g" , singlespawn "Firefox" "firefox")
+        , ("M-e" , spawn "thunar" )
+        , ("M-s" , spawn "gvim")
+        , ("M-c" , spawn "gsimplecal")
             -- Window Management
         , ("M-h" , windowGo L False)
         , ("M-j" , windowGo D False)
