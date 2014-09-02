@@ -240,6 +240,7 @@ alias addon-sdk="cd /opt/addon-sdk && source bin/activate; cd -"
 alias hman='man --html=firefox-nightly'
 
 alias vi='vim'
+alias nano='vim'
 
 alias cdd='cd; cd'
 alias ..='cd ..'
