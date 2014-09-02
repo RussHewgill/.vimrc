@@ -372,20 +372,12 @@ mykeysP =
         , ("M-o" , spawn "pause")
             -- Launch Apps
         , ("M-d" , spawn "gmrun")
-        , ("M-t" , spawn "roxterm")
+        , ("M-s t" , spawn "roxterm")
             --TODO: stop from launching more windows
-        {-, ("M-g" , singlespawn "Firefox" "firefox-nightly")-}
-        , ("M-g" , singlespawn "Firefox" "firefox")
-            --TODO: set layout to 50/50 columns
-            --TODO: more elegant pls //if current WS is empty, don't move
-        {-, ("M-e" , nextEmpty "thunar" )-}
-        , ("M-e" , spawn "thunar" )
-        , ("M-s" , spawn "gvim")
-        , ("M-c" , spawn "gsimplecal")
-            -- Keyboard Scrolling
-            -- TODO: make modal
-        , ("M-M1-k" , spawn "xdotool click 4")
-        , ("M-M1-j" , spawn "xdotool click 5")
+        , ("M-s g" , singlespawn "Firefox" "firefox")
+        , ("M-s e" , spawn "thunar" )
+        , ("M-s s" , spawn "gvim")
+        , ("M-s c" , spawn "timeout 5 gsimplecal")
             -- Window Management
         , ("M-h" , windowGo L False)
         , ("M-j" , windowGo D False)

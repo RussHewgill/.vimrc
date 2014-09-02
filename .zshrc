@@ -201,7 +201,6 @@ setopt AUTO_CD
 export PATH=$HOME/bin:/usr/local/bin:$PATH:/home/russ/.cabal/bin
 export LANG=en_US.UTF-8
 
-
 set -U BROWSER 'firefox-nightly'
 
 # aliases {{{
@@ -214,8 +213,9 @@ alias ls='ls --group-directories-first --color=always'
 alias lsd='ls -d */'
 alias :q='exit'
 
+alias tmux='tmux -2'
 function shh () {
-    ssh -t $1 'tmux has-session && tmux attach || tmux'
+    ssh -t $1 'tmux has-session && tmux -2 attach || tmux -2'
 }
 
 function calc () {
