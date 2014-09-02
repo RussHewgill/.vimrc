@@ -253,7 +253,6 @@ alias ....='...; ..'
 
 alias grep='grep --color=auto'
 alias mkdir='mkdir -p -v'
-alias nano='nano -w'
 alias ping='ping -c 5'
 alias dmesg='dmesg -HL'
 
