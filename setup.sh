@@ -1,8 +1,26 @@
 #!/bin/bash
 
-install='aptitude install -y'
+#Determine OS
+if hash lsb_release 2>/dev/null; then
+  distro=$(lsb_release -a 2>/dev/null| awk '/ID/ {print $3}')
+elif [[ -f /etc/arch-release ]]; then
+  distro=Arch
+elif [[ -f /etc/redhat-release ]]; then
+  distro=RedHat
+fi
 
-aptitude update
+if [[ $distro == Ubuntu ]]; then
+  install='aptitude install -y'
+  aptitude update && aptitude upgrade -y
+if [[ $distro == RedHat ]]; then
+  install='yum install -y'
+  yum update
+if [[ $distro == Arch ]]; then
+  install='pacman -Sy'
+  pacman -Syu --noconfirm
+else
+  echo wat
+fi
 
 if ! hash git 2>/dev/null; then
   $install git; fi
