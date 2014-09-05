@@ -149,7 +149,6 @@ mymanagehook = composeAll . concat $
     , [className =? "Gvim"          --> doF W.swapMaster ]
     , [className =? "Gmrun"         --> doSideFloat CW   ]
     {-, [className =? "Gmrun"         --> doF W.focusUp   ]-}
-    , [className =? "Hexchat"       --> doShift (wss!!3) ]
     , [className =? "Xmessage"      --> doFloat          ]
     , [className =? "Gsimplecal"    --> placeHook (withGaps (0,0,30,0) $ underMouse (0,0)) ]
     , [isFullscreen                 --> doFullFloat      ]
@@ -372,7 +371,7 @@ mykeysP =
         , ("M-o" , spawn "pause")
             -- Launch Apps
         , ("M-d" , spawn "gmrun")
-        , ("M-t" , spawn "roxterm")
+        , ("M-t" , spawn "roxterm --profile=Default")
             --TODO: stop from launching more windows
         , ("M-g" , singlespawn "Firefox" "firefox")
         , ("M-e" , spawn "thunar" )

@@ -152,7 +152,7 @@ if has("gui_running")
     "let g:airline_theme='molokai'
     colorscheme badwolf
 
-    set guifont=Inconsolata\ Medium\ 14
+    set guifont=Inconsolata\ Medium\ 12
     set guioptions-=T
     set guioptions-=e
     set guioptions+=c

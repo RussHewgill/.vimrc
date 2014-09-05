@@ -59,13 +59,9 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
     source "${ZDOTDIR:-$HOME}/.zprezto/modules/syntax-highlighting/external/zsh-syntax-highlighting.zsh"
 fi
 
-
+#auto load prompt
 autoload -U promptinit
 promptinit
-
-export HISTSIZE=10000000
-export EDITOR='vim'
-export JAVA_HOME=/opt/java/
 
 autoload -U edit-command-line
 zle -N edit-command-line
@@ -178,6 +174,7 @@ key[PageDown]=${terminfo[knp]}
 [[ -n "${key[Right]}"    ]]  && bindkey  "${key[Right]}"    forward-char
 [[ -n "${key[PageUp]}"   ]]  && bindkey  "${key[PageUp]}"   beginning-of-buffer-or-history
 [[ -n "${key[PageDown]}" ]]  && bindkey  "${key[PageDown]}" end-of-buffer-or-history
+[[ -n "${key[PageDown]}" ]]  && bindkey  "${key[PageDown]}" end-of-buffer-or-history
 
 # Finally, make sure the terminal is in application mode, when zle is
 # active. Only then are the values from $terminfo valid.
@@ -199,21 +196,25 @@ zstyle ':prezto:module:editor' key-bindings 'emacs'
 setopt nobeep
 setopt AUTO_CD
 
-export PATH=$HOME/bin:/usr/local/bin:$PATH:/home/russ/.cabal/bin
+# Exports {{{
+
+export HISTSIZE=10000000
+export EDITOR='vim'
+export JAVA_HOME=/opt/java/
 export LANG=en_US.UTF-8
+export PATH=$HOME/bin:/usr/local/bin:$PATH:/home/russ/.cabal/bin
+export WEATHER='waterloo,ca'
+
+# }}}
+
+
 
 set -U BROWSER 'firefox-nightly'
 
+# Aliases {{{
 
-alias sudoedit='sudo -E vim'
+source ~/.config/.aliases
 
-alias bdf='btrfs filesystem df ~/files'
-
-alias ls='ls --group-directories-first --color=always'
-alias lsd='ls -d */'
-alias :q='exit'
-
-alias tmux='tmux -2'
 function shh () {
     ssh -t $1 'tmux has-session && tmux -2 attach || tmux -2'
 }
@@ -222,54 +223,8 @@ function calc () {
     bc -l <<< "$@"
 }
 
-alias hask='clear; ghci'
-alias hhask='cd ~/programs/haskell/; clear; ghci'
-alias xmds='cd ~/.xmonad; clear; ghci xmonad.hs'
-
-alias tray='trayer --widthtype pixel --width 200 --heighttype pixel --height 30 --expand false --SetDockType false & nm-applet &> /dev/null &'
-alias ktray='pkill nm-applet & pkill trayer'
-
-alias vbm='VBoxManage'
-
-alias ipy='ipython3'
-alias py='python3'
-alias server='python3 -m http.server 8080'
-
 function pypass () {
     python -c "import crypt, getpass, pwd; print(crypt.crypt('$1', '\$6\$saltsalt\$'))"
 }
-
-alias addon-sdk="cd /opt/addon-sdk && source bin/activate; cd -"
-
-alias hman='man --html=firefox-nightly'
-
-alias vi='vim'
-alias nano='vim'
-
-alias cdd='cd; cd'
-alias ..='cd ..'
-alias ...='..; ..'
-alias ....='...; ..'
-
-alias grep='grep --color=auto'
-alias mkdir='mkdir -p -v'
-alias ping='ping -c 5'
-alias dmesg='dmesg -HL'
-
-alias rm='rm -I'  
-
-alias yum='sudo yum'
-alias yumin='sudo yum install'
-
-alias aptin='sudo aptitude install'
-alias apt='sudo aptitude'
-alias aptup='sudo aptitude update'
-alias aptupg='sudo aptitude upgrade'
-
-alias pacin='sudo pacman -S'
-alias pacupg='sudo pacman -Syu'
-alias pacins='sudo pacman -U'
-alias pacre='sudo pacman -R'
-alias pacse='sudo pacman -Ss | grep'
 
 # }}}
