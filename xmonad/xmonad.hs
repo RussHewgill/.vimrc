@@ -21,13 +21,12 @@ import XMonad.Layout.NoBorders
 import XMonad.Layout.PerWorkspace
 import XMonad.Util.EZConfig
 import XMonad.Util.Run(spawnPipe)
-import XMonad.Util.Scratchpad
+import XMonad.Util.NamedScratchpad
 import XMonad.Util.WorkspaceCompare
 import qualified XMonad.StackSet as W
 import XMonad.Util.WindowProperties
 import XMonad.Layout.IndependentScreens
 import XMonad.Layout.Reflect
-import XMonad.Util.Paste
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Layout.Grid
 
@@ -64,7 +63,7 @@ main = do
 conf = withNavigation2DConfig defaultNavigation2DConfig 
         $ defaultConfig
         {
-          manageHook  = mymanagehook <+> manageScratchPad 
+          manageHook  = mymanagehook <+> namedScratchpadManageHook scratchpads -- <+> manageScratchPad 
                         <+> manageHook defaultConfig <+> manageDocks 
         , layoutHook  = mylayoutHook
         , terminal    = "roxterm"
@@ -89,7 +88,7 @@ runbars x left Nothing = x { logHook = myPPlog left 1 }
 runbars x left (Just right) = x { logHook= myPPlog left 0 >> myPPlog right 1 }
 
 -- produce a log for a handle and screen
-myPPlog handle screen = (dynamicLogWithPP $ dzenPP
+myPPlog handle screen = (dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ dzenPP
                 { ppOutput          = hPutStrLn handle
                 , ppCurrent         = dzenColor fg cwsbg . clickable . pad . deTagWS
                 , ppTitle           = dzenColor fg bg . wrap "^ca(3, xdotool key super+m)\
@@ -100,11 +99,10 @@ myPPlog handle screen = (dynamicLogWithPP $ dzenPP
                 , ppSep             = ""
                 , ppWsSep           = "^fg(" ++ wssepbg ++ ")^r(2x30)"
                 , ppUrgent          = dzenColor fg "red"
-                , ppSort            = fmap (.scratchpadFilterOutWorkspace) getSortByTag
                 , ppLayout          = const ""
                 })
         where
-            -- add dzne clickable tags to each workspace
+            -- add dzen clickable tags to each workspace
             clickable s = wrap ("^ca(1, xdotool key super+" 
                             ++ (filter (\x->elem x ['1'..'9']) $ deTagWS s) 
                             ++ ")") "^ca()" s
@@ -249,11 +247,14 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-140-*-*-*-*-*-*' "
 
 -- Scratchpad {{{
 
-manageScratchPad :: ManageHook
-manageScratchPad = scratchpadManageHook (W.RationalRect 0 0 w h)
+scratchpads = [
+    NS "floatterm" (term ++ "floatterm") ( title =? "floatterm") rect
+  , NS "cmus" (term ++ "cmus -e cmus") ( title =? "cmus") rect
+  , NS "notepad" (term ++ "notepad -e vim ~/test/notepad") ( title =? "notepad") rect
+  ]
   where
-    h = 0.3     -- terminal height, 10%
-    w = 1       -- terminal width, 100%
+    rect = customFloating $ W.RationalRect 0 0 1 0.3
+    term = "roxterm --separate --profile=scratchpad -T "
 
 -- }}}
 
@@ -263,9 +264,10 @@ myrestart = "xmonad --restart"
 
 -- cycle through WSs with windows, excluding scratchpad
 cycleHiddenNonEmptyNS :: Direction1D -> X ()
-cycleHiddenNonEmptyNS d = findWorkspace filtsort d HiddenNonEmptyWS 1 >>= windows . W.view
-    where
-        filtsort = fmap (.scratchpadFilterOutWorkspace) getSortByIndex
+{-cycleHiddenNonEmptyNS d = findWorkspace filtsort d HiddenNonEmptyWS 1 >>= windows . W.view-}
+cycleHiddenNonEmptyNS d = findWorkspace getSortByIndex d HiddenNonEmptyWS 1 >>= windows . W.view
+    {-where-}
+        {-filtsort = fmap (.scratchpadFilterOutWorkspace) getSortByIndex-}
 
 -- either go to a workspace, or toggle if it's already selected
 goOrToggle :: WorkspaceId -> X ()
@@ -376,7 +378,6 @@ mykeysP =
         , ("M-g" , singlespawn "Firefox" "firefox")
         , ("M-e" , spawn "thunar" )
         , ("M-s" , spawn "gvim")
-        , ("M-c" , spawn "gsimplecal")
             -- Window Management
         , ("M-h" , windowGo L False)
         , ("M-j" , windowGo D False)
@@ -408,13 +409,15 @@ mykeysP =
         , ("M-q" , spawn myrestart)
         , ("M-S-<End>" , io (exitWith  ExitSuccess))
             -- Scratchpad Terminal
-        , ("M-x" , scratchpadSpawnActionCustom "roxterm --separate --name scratchpad" )
+        {-, ("M-x" , scratchpadSpawnActionCustom "roxterm --separate --name scratchpad" )-}
+        , ("M-x" , namedScratchpadAction scratchpads "floatterm")
+        , ("M-c" , namedScratchpadAction scratchpads "cmus")
+        , ("M-p" , namedScratchpadAction scratchpads "notepad")
         {-, ("<F8>" , spawn "~/bin/autoclick.sh" )-}
         ]
 
 notKeysP = 
     [
-    ("M-p")
     ]
 
 -- }}}
