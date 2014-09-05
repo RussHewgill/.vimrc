@@ -24,6 +24,7 @@ import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.WorkspaceCompare
 import qualified XMonad.StackSet as W
+import qualified XMonad.Hooks.InsertPosition as H
 import XMonad.Util.WindowProperties
 import XMonad.Layout.IndependentScreens
 import XMonad.Layout.Reflect
@@ -156,16 +157,18 @@ mymanagehook = composeAll . concat $
     {-, [(fmap (isInfixOf c) title <&&> (qnot isDialog)) --> doF avoidMaster | c <- hiPriority ]-}
     , [className =? "Gimp"          --> doShift (wss!!4) ] 
     , [fmap (isInfixOf c) title --> doF W.focusUp | c <- pwds ]
-    ]
+    ] 
+    {-<+>-}
+    {-composeOne [  ]-}
     where 
         -- These windows go to master pane when started
-        hiPriority = ["Firefox", "Gvim", "Hexchat", "Truecrypt"]
+        hiPriority = ["Firefox", "Gvim", "Hexchat"]
         pwds = [ "Enter password", "Administrator privileges", "Select a Partition or Device" ]
 
-qnot :: Query Bool -> Query Bool
-qnot prop = do 
-    r <- prop
-    return $ not $ r
+{-qnot :: Query Bool -> Query Bool-}
+{-qnot prop = do -}
+    {-r <- prop-}
+    {-return $ not $ r-}
 
 test prog cmd = allWithProperty (ClassName prog) >>=
                 \x -> if (null x)
@@ -233,10 +236,10 @@ mywsso = filter ((=='0') . last) wss
 -- important:   -p,     don't timeout
 --              -e ''   disable close on right click
 --              -y -1
-mydzenclockl = "conky | dzen2 -xs 1 -ta r -x 600 " ++ dzenfont ++ dzenOpts
+mydzenclockl = "conky | dzen2 -xs 1 -ta r -x 800 " ++ dzenfont ++ dzenOpts
 mydzenclockr = "conky | dzen2 -xs 2 -ta r -x 800 " ++ dzenfont ++ dzenOpts
 
-mydzenl   = "dzen2 -xs 1 -w 600 -ta l " ++ dzenfont ++ dzenOpts
+mydzenl   = "dzen2 -xs 1 -w 800 -ta l " ++ dzenfont ++ dzenOpts
 mydzenr   = "dzen2 -xs 2 -w 800 -ta l " ++ dzenfont ++ dzenOpts
 
 dzenOpts  = "-p -e '' -h 30 -y -1 -fg '" ++ fg ++ "' -bg '" ++ bg ++ "'"
@@ -264,18 +267,19 @@ myrestart = "xmonad --restart"
 
 -- cycle through WSs with windows, excluding scratchpad
 cycleHiddenNonEmptyNS :: Direction1D -> X ()
-{-cycleHiddenNonEmptyNS d = findWorkspace filtsort d HiddenNonEmptyWS 1 >>= windows . W.view-}
-cycleHiddenNonEmptyNS d = findWorkspace getSortByIndex d HiddenNonEmptyWS 1 >>= windows . W.view
-    {-where-}
-        {-filtsort = fmap (.scratchpadFilterOutWorkspace) getSortByIndex-}
+cycleHiddenNonEmptyNS d = findWorkspace filtsort d HiddenNonEmptyWS 1 >>= windows . W.view
+    where
+        filtsort = fmap (.namedScratchpadFilterOutWorkspace) getSortByIndex
 
 -- either go to a workspace, or toggle if it's already selected
 goOrToggle :: WorkspaceId -> X ()
 goOrToggle w = do
     cur <- gets (W.currentTag . windowset)
     if cur == w
-        then toggleWS' ["NSP"]
+        then toggleWS' [scratchpadws]
         else (windows . W.view $ w)
+
+toggleOrViewNoSP = toggleOrDoSkip [scratchpadws] W.greedyView
 
 -- spawn a program if it's window isn't running
 singlespawn prog cmd = allWithProperty (ClassName prog) >>=
@@ -340,7 +344,7 @@ mykeysdualhead = mykeysP ++ [
         ++  -- Disable Greedy Switching
         [ (otherModMasks ++ "M-" ++ [key], action tag)
             | (tag, key) <- zip mywsso $ concatMap show [(length mywssl + length mywssr)+1..9]
-            , (otherModMasks, action) <- [  ("", toggleOrView )
+            , (otherModMasks, action) <- [  ("", toggleOrViewNoSP )
                                             , ("S-", windows . W.shift ) ]]
         where
             screenswitch s ws = ( viewScreen s ) >> (windows . W.view $ ws )
@@ -352,7 +356,7 @@ mykeysdualhead = mykeysP ++ [
 mykeysonehead = mykeysP ++
             [ (otherModMasks ++ "M-" ++ [key], action tag)
             | (tag, key) <- zip wss ['1'..'9']
-            , (otherModMasks, action) <- [  ("", toggleOrView )
+            , (otherModMasks, action) <- [  ("", toggleOrViewNoSP )
                                             , ("S-", windows . W.shift ) ]]
 
 -- }}}
@@ -370,7 +374,7 @@ mykeysP =
         , ("<XF86AudioRaiseVolume>" , spawn "amixer -q set Master 2%+ unmute")
         {-, ("<XF86AudioMute>" , spawn "amixer -q set Master 2%+ unmute")-}
         , ("<XF86AudioMute>" , spawn "amixer set Master toggle")
-        , ("M-o" , spawn "pause")
+        , ("M-o" , spawn "cmus-remote -u")
             -- Launch Apps
         , ("M-d" , spawn "gmrun")
         , ("M-t" , spawn "roxterm --profile=Default")
@@ -394,7 +398,6 @@ mykeysP =
         , ("M-S-." , repeatX (sendMessage Expand) 5)
         , ("M-m" , cycleHiddenNonEmptyNS Next)
         , ("M-n" , cycleHiddenNonEmptyNS Prev)
-        , ("M-S-p" , toggleOrView (wss!!2) )
         , ("M-b" , toggleWS )
         , ("M-f" , withFocused $ windows . W.sink)
         , ("M1-<F4>" , kill)
@@ -402,14 +405,13 @@ mykeysP =
             -- Lock / Suspend
             -- lockscreen just picks a random wallpaper from a dual monitor
             -- folder and starts i3lock
-        , ("M-<Pause>" , spawn "~/.lockscreen.sh; systemctl suspend")
+        , ("M-<Pause>" , spawn "systemctl suspend")
         , ("M-<End>"   , spawn "~/.lockscreen.sh")
         , ("M-<Delete>"   , spawn "~/.lockscreen.sh")
         , ("M-S-q" , spawn $ "pkill dzen2")
         , ("M-q" , spawn myrestart)
-        , ("M-S-<End>" , io (exitWith  ExitSuccess))
+        , ("M-S-<Delete>" , io (exitWith  ExitSuccess))
             -- Scratchpad Terminal
-        {-, ("M-x" , scratchpadSpawnActionCustom "roxterm --separate --name scratchpad" )-}
         , ("M-x" , namedScratchpadAction scratchpads "floatterm")
         , ("M-c" , namedScratchpadAction scratchpads "cmus")
         , ("M-p" , namedScratchpadAction scratchpads "notepad")
