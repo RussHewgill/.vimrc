@@ -252,11 +252,13 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-140-*-*-*-*-*-*' "
 
 scratchpads = [
     NS "floatterm" (term ++ "floatterm") ( title =? "floatterm") rect
-  , NS "cmus" (term ++ "cmus -e cmus") ( title =? "cmus") rect
+  {-, NS "cmus" (term ++ "cmus -e cmus") ( title =? "cmus") tunes-}
+  , NS "cmus" ("xterm -xrm \"xterm*allowTitleOps: false\" -T cmus -e cmus") ( title =? "cmus") tunes
   , NS "notepad" (term ++ "notepad -e vim ~/test/notepad") ( title =? "notepad") rect
   ]
   where
     rect = customFloating $ W.RationalRect 0 0 1 0.3
+    tunes = customFloating $ W.RationalRect 0 0 1 0.5
     term = "roxterm --separate --profile=scratchpad -T "
 
 -- }}}
