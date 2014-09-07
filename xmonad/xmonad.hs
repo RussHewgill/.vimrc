@@ -257,7 +257,7 @@ scratchpads = [
   , NS "notepad" (term ++ "notepad -e vim ~/test/notepad") ( title =? "notepad") rect
   ]
   where
-    rect = customFloating $ W.RationalRect 0 0 1 0.3
+    rect = customFloating $ W.RationalRect 0 0 1 0.4
     tunes = customFloating $ W.RationalRect 0 0 1 0.5
     term = "roxterm --separate --profile=scratchpad -T "
 

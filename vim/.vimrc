@@ -39,7 +39,7 @@ Plugin 'bling/vim-airline'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'tomasr/molokai'
 Plugin 'tpope/vim-vividchalk'
-
+Plugin 'https://github.com/nanotech/jellybeans.vim'
 
 
 " All of your Plugins must be added before the following line
@@ -145,11 +145,12 @@ let g:hs_highlight_types=1
 let g:hs_highlight_boolean=1
 
 set background=dark
+"colorscheme jellybeans
+"colorscheme base16-default
 
 if has("gui_running")
     let g:badwolf_darkgutter = 1
-    "let g:molokai_original = 1
-    "let g:airline_theme='molokai'
+    "colorscheme badwolf
     colorscheme badwolf
 
     set guifont=Inconsolata\ Medium\ 12
@@ -163,13 +164,8 @@ if has("gui_running")
     set guitablabel=%M\ %t
 else
     set t_Co=256
-    "let g:solarized_termtrans=1
-    "let g:solarized_contrast="high"
-    "let g:solarized_visibility="medium"
-    "let g:solarized_termcolors=256
-    "let g:airline_theme='molokai'
+    let g:badwolf_darkgutter = 1
     colorscheme badwolf
-    "colorscheme solarized
 endif
 
 set encoding=utf8
