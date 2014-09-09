@@ -20,7 +20,7 @@ Plugin 'tpope/vim-surround'
 Plugin 'tmhedberg/SimpylFold'
 Plugin 'godlygeek/tabular'
 Plugin 'Lokaltog/vim-easymotion'
-Plugin 'Shougo/neocomplcache.vim'
+"Plugin 'Shougo/neocomplcache.vim'
 Plugin 'eagletmt/neco-ghc'
 Plugin 'https://github.com/raichoo/haskell-vim'
 "Plugin 'https://github.com/kien/rainbow_parentheses.vim'
@@ -213,7 +213,12 @@ nnoremap <Leader>tt :tabp<CR>
 
 nnoremap <Leader>tv :tabe ~/.vimrc<CR>
 
+"Tabularize
+nnoremap <Leader>= :Tabularize /=<CR>
+nnoremap <Leader><Tab> :Tabularize /
+
 nnoremap ; :
+vnoremap ; :
 
 nnoremap o o<esc>
 nnoremap O O<esc>
@@ -261,6 +266,13 @@ nnoremap ZX zO
 
 "Plugin Settings
 "{{{
+
+" Syntastic
+"{{{
+
+let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"
+
+"}}}
 
 " Rainbow Parens 
 " {{{

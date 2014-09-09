@@ -119,7 +119,6 @@ key[PageDown]=${terminfo[knp]}
 [[ -n "${key[Right]}"    ]]  && bindkey  "${key[Right]}"    forward-char
 [[ -n "${key[PageUp]}"   ]]  && bindkey  "${key[PageUp]}"   beginning-of-buffer-or-history
 [[ -n "${key[PageDown]}" ]]  && bindkey  "${key[PageDown]}" end-of-buffer-or-history
-[[ -n "${key[PageDown]}" ]]  && bindkey  "${key[PageDown]}" end-of-buffer-or-history
 
 # Finally, make sure the terminal is in application mode, when zle is
 # active. Only then are the values from $terminfo valid.
@@ -141,9 +140,14 @@ zstyle ':prezto:module:editor' key-bindings 'emacs'
 setopt nobeep
 setopt AUTO_CD
 
+setopt inc_append_history
+setopt share_history
+#setopt hist_save_by_copy
+
 # Exports {{{
 
 export HISTSIZE=10000000
+export SAVEHIST=10000000
 export EDITOR='vim'
 export JAVA_HOME=/opt/java/
 export LANG=en_US.UTF-8

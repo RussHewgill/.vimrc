@@ -382,7 +382,7 @@ mykeysP =
         , ("M-t" , spawn "roxterm --profile=Default")
             --TODO: stop from launching more windows
         , ("M-g" , singlespawn "Firefox" "firefox")
-        , ("M-e" , spawn "thunar" )
+        , ("M-e" , spawn "xterm -e ranger" )
         , ("M-s" , spawn "gvim")
             -- Window Management
         , ("M-h" , windowGo L False)
@@ -404,7 +404,6 @@ mykeysP =
         , ("M-f" , withFocused $ windows . W.sink)
         , ("M1-<F4>" , kill)
         {-, ("M-p" , windows W.shiftMaster )-}
-            -- Lock / Suspend
             -- lockscreen just picks a random wallpaper from a dual monitor
             -- folder and starts i3lock
         , ("M-<Pause>" , spawn "systemctl suspend")
