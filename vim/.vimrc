@@ -271,6 +271,7 @@ nnoremap ZX zO
 "{{{
 
 let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"
+let g:syntastic_asm_dialect = 'nasm'
 
 "}}}
 

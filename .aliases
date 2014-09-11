@@ -12,6 +12,7 @@ alias ktray='pkill nm-applet & pkill trayer'
 alias vbm='VBoxManage'
 alias ipy='ipython3'
 alias py='python3'
+alias py2='python2'
 alias server='python3 -m http.server 8080'
 alias addon-sdk="cd /opt/addon-sdk && source bin/activate; cd -"
 alias hman='man --html=firefox-nightly'

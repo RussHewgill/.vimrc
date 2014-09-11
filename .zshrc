@@ -142,7 +142,6 @@ setopt AUTO_CD
 
 setopt inc_append_history
 setopt share_history
-#setopt hist_save_by_copy
 
 # Exports {{{
 
@@ -168,7 +167,7 @@ function shh () {
     ssh -t $1 'tmux has-session && tmux -2 attach || tmux -2'
 }
 
-function calc () {
+function c () {
     bc -l <<< "$@"
 }
 
