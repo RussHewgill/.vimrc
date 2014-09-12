@@ -141,6 +141,7 @@ emptywsfg = "#888888"
 mymanagehook = composeAll . concat $
     [ [className =? "Firefox"  <&&> resource =? "Navigator" --> doShift (wss!!0) ]
     , [className =? "Firefox"       --> doF W.swapMaster ]
+    , [role =? "pentagvim"            --> (doShift (wss!!0)) <+> rect ]
     , [className =? "Firefox" <&&> resource /=? "Navigator" --> doFloat]
     , [className =? "Clementine"    --> doShift (wss!!2) ]
     --TODO: only move if no other gvim is running
@@ -164,6 +165,9 @@ mymanagehook = composeAll . concat $
         -- These windows go to master pane when started
         hiPriority = ["Firefox", "Gvim", "Hexchat"]
         pwds = [ "Enter password", "Administrator privileges", "Select a Partition or Device" ]
+        role = stringProperty "WM_WINDOW_ROLE"
+        rect = customFloating $ W.RationalRect 0 0 1 0.4
+
 
 {-qnot :: Query Bool -> Query Bool-}
 {-qnot prop = do -}
@@ -251,15 +255,24 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-140-*-*-*-*-*-*' "
 -- Scratchpad {{{
 
 scratchpads = [
-    NS "floatterm" (term ++ "floatterm") ( title =? "floatterm") rect
-  {-, NS "cmus" (term ++ "cmus -e cmus") ( title =? "cmus") tunes-}
-  , NS "cmus" ("xterm -xrm \"xterm*allowTitleOps: false\" -T cmus -e cmus") ( title =? "cmus") tunes
-  , NS "notepad" (term ++ "notepad -e vim ~/test/notepad") ( title =? "notepad") rect
+    NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
+  , NS "cmus" (xterm ++ "cmus -e cmus") ( title =? "cmus") tunes
+  , NS "ranger" (xterm ++ "ranger -e ranger") ( title =? "ranger") tunes
+  , NS "notepad" ("exec gvim --servername notepad -f --role notepad ~/test/notepad") ( role =? "notepad") rect
   ]
   where
-    rect = customFloating $ W.RationalRect 0 0 1 0.4
     tunes = customFloating $ W.RationalRect 0 0 1 0.5
-    term = "roxterm --separate --profile=scratchpad -T "
+    rect = customFloating $ W.RationalRect 0 0 1 0.4
+    roxterm = "roxterm --separate --profile=scratchpad -T "
+    xterm ="xterm -xrm \"xterm*allowTitleOps: false\" -T " 
+    role = stringProperty "WM_WINDOW_ROLE"
+
+scratchpadBinds = [
+          ("M-x" , namedScratchpadAction scratchpads "floatterm")
+        , ("M-c" , namedScratchpadAction scratchpads "cmus")
+        , ("M-p" , namedScratchpadAction scratchpads "notepad")
+        , ("M-e" , namedScratchpadAction scratchpads "ranger")
+        ]
 
 -- }}}
 
@@ -382,8 +395,9 @@ mykeysP =
         , ("M-t" , spawn "roxterm --profile=Default")
             --TODO: stop from launching more windows
         , ("M-g" , singlespawn "Firefox" "firefox")
-        , ("M-e" , spawn "xterm -e ranger" )
-        , ("M-s" , spawn "gvim")
+        {-, ("M-e" , spawn "xterm -e ranger" )-}
+        {-, ("M-s" , spawn "gvim --servername GVIM")-}
+        , ("M-s" , spawn gvimcmd )
             -- Window Management
         , ("M-h" , windowGo L False)
         , ("M-j" , windowGo D False)
@@ -412,12 +426,12 @@ mykeysP =
         , ("M-S-q" , spawn $ "pkill dzen2")
         , ("M-q" , spawn myrestart)
         , ("M-S-<Delete>" , io (exitWith  ExitSuccess))
-            -- Scratchpad Terminal
-        , ("M-x" , namedScratchpadAction scratchpads "floatterm")
-        , ("M-c" , namedScratchpadAction scratchpads "cmus")
-        , ("M-p" , namedScratchpadAction scratchpads "notepad")
         {-, ("<F8>" , spawn "~/bin/autoclick.sh" )-}
         ]
+        ++
+        scratchpadBinds
+        where
+          gvimcmd = "gvim --servername GVIM --remote-send '<Esc>:tabnew<CR>'; if [[ $? == 1 ]]; then gvim --servername GVIM; fi"
 
 notKeysP = 
     [

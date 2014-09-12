@@ -191,7 +191,7 @@ inoremap jk <Esc>
 inoremap jh <Esc>i
 inoremap jl <Esc>la
 
-nnoremap <leader>tq :w<CR>:so %<cr>
+nnoremap <leader>tr :w<CR>:so %<cr>
 
 "Hardcore mode
 nnoremap <up> <nop>
@@ -205,13 +205,14 @@ inoremap <right> ->
 
 nnoremap <Leader>tn :tabnew<cr>
 nnoremap <Leader>to :tabonly<cr>
-nnoremap <Leader>tc :tabclose<cr>
+nnoremap <Leader>tq :tabclose<cr>
 nnoremap <Leader>tm :tabmove
 
 nnoremap <Leader>ty :tabn<CR>
 nnoremap <Leader>tt :tabp<CR>
 
 nnoremap <Leader>tv :tabe ~/.vimrc<CR>
+nnoremap <Leader>tx :tabe ~/.xmonad/xmonad.hs<CR>
 
 "Tabularize
 nnoremap <Leader>= :Tabularize /=<CR>
