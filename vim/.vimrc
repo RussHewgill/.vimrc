@@ -130,8 +130,9 @@ set incsearch
 set showmatch
 set hlsearch
 
-"nmap <M-r> 
 nmap <silent> ,, :let @/=""<cr>
+vmap <silent> ,, :let @/=""<cr>
+
 nnoremap <tab> %
 vnoremap <tab> %
 "}}}
@@ -162,6 +163,7 @@ if has("gui_running")
     set guioptions-=l
     set guioptions-=b
     set guitablabel=%M\ %t
+    set guiheadroom=0
 else
     set t_Co=256
     let g:badwolf_darkgutter = 1
@@ -213,6 +215,13 @@ nnoremap <Leader>tt :tabp<CR>
 
 nnoremap <Leader>tv :tabe ~/.vimrc<CR>
 nnoremap <Leader>tx :tabe ~/.xmonad/xmonad.hs<CR>
+
+nmap <Leader>y "*y
+vmap <Leader>y "*y
+nmap <Leader>d "*d
+vmap <Leader>d "*d
+nmap <Leader>p "*p
+vmap <Leader>p "*p
 
 "Tabularize
 nnoremap <Leader>= :Tabularize /=<CR>
@@ -337,6 +346,7 @@ hi EasyMotionShade guifg=#998f84
 "{{{
 
 let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#Syntastic#enabled = 0
 
 "}}}
 

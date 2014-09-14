@@ -166,7 +166,7 @@ mymanagehook = composeAll . concat $
         hiPriority = ["Firefox", "Gvim", "Hexchat"]
         pwds = [ "Enter password", "Administrator privileges", "Select a Partition or Device" ]
         role = stringProperty "WM_WINDOW_ROLE"
-        rect = customFloating $ W.RationalRect 0 0 1 0.4
+        rect = customFloating $ W.RationalRect 0 0.3 0.3 0.3
 
 
 {-qnot :: Query Bool -> Query Bool-}
