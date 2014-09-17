@@ -1,5 +1,5 @@
 -- vim: set foldlevel=0 :
-{- Notes
+{- Notes {{{
  -
  - Most of this was done while learning haskell
  - goal of config was more or less to behave like i3
@@ -7,7 +7,8 @@
  - music stuff for dzen just uses dbus to talk with clementine
  - {{{ }}} is for vim folding, makes config ~30 lines
  -
--}
+}}}-}
+
 -- Imports {{{
 import XMonad
 import XMonad.Actions.CycleWS
@@ -387,8 +388,12 @@ mykeysP =
         , ("M-v f" , spawn "amixer -q set Master 2%+ unmute")
         , ("<XF86AudioLowerVolume>" , spawn "amixer -q set Master 2%- unmute")
         , ("<XF86AudioRaiseVolume>" , spawn "amixer -q set Master 2%+ unmute")
-        {-, ("<XF86AudioMute>" , spawn "amixer -q set Master 2%+ unmute")-}
         , ("<XF86AudioMute>" , spawn "amixer set Master toggle")
+            -- Tunes
+        , ("<XF86AudioPlay>" , spawn "cmus-remote -u")
+        , ("<XF86AudioStop>" , spawn "cmus-remote -s")
+        , ("<XF86AudioPrev>" , spawn "cmus-remote -r")
+        , ("<XF86AudioNext>" , spawn "cmus-remote -n")
         , ("M-o" , spawn "cmus-remote -u")
             -- Launch Apps
         , ("M-d" , spawn "gmrun")

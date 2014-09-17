@@ -24,6 +24,9 @@ Plugin 'Lokaltog/vim-easymotion'
 Plugin 'eagletmt/neco-ghc'
 Plugin 'https://github.com/raichoo/haskell-vim'
 "Plugin 'https://github.com/kien/rainbow_parentheses.vim'
+Plugin 'https://github.com/kien/ctrlp.vim'
+Plugin 'https://github.com/SirVer/ultisnips'
+Plugin 'https://github.com/honza/vim-snippets'
 
 "Plugin 'davidhalter/jedi-vim'
 "Plugin 'michaeljsmith/vim-indent-object'
@@ -62,9 +65,9 @@ filetype plugin indent on    " required
 "
 "{{{
 
-set tabstop=2
-set shiftwidth=2
-set softtabstop=2
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
 set expandtab
 set smarttab
 set number
@@ -215,6 +218,8 @@ nnoremap <Leader>tt :tabp<CR>
 
 nnoremap <Leader>tv :tabe ~/.vimrc<CR>
 nnoremap <Leader>tx :tabe ~/.xmonad/xmonad.hs<CR>
+nnoremap <Leader>tz :tabe ~/.zshrc<CR>
+nnoremap <Leader>ta :tabe ~/.config/.aliases<CR>
 
 nmap <Leader>y "*y
 vmap <Leader>y "*y
@@ -247,7 +252,7 @@ nnoremap <C-l> <C-w>l
 noremap <C-y> 3<C-y>
 noremap <C-e> 3<C-e>
 
-nnoremap <leader><leader>b :r~/.vim/snippets/commentbreak.txt<CR>jla
+"nnoremap <leader><leader>b :r~/.vim/snippets/commentbreak.txt<CR>jla
 
 " Move a line with alt+[jk], indent with alt +[hl]
 nnoremap <A-j> :m+<CR>==
@@ -276,6 +281,23 @@ nnoremap ZX zO
 
 "Plugin Settings
 "{{{
+
+" CtrlP
+" {{{
+
+let g:ctrlp_show_hidden = 1
+
+" }}}
+
+
+" Ultisnips
+" {{{
+
+let g:UltiSnipsExpandTrigger="<tab>"
+
+let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/Ultisnips"
+
+" }}}
 
 " Syntastic
 "{{{
@@ -355,6 +377,21 @@ let g:airline#extensions#Syntastic#enabled = 0
 " Other tweaks
 "{{{
 
+"edit home
+cabbrev E <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'e ~/' : 'e')<CR>
+
+"send result of cmd into buffer
+function! TabMessage(cmd)
+  redir => message
+  silent execute a:cmd
+  redir END
+  let @"=message
+endfunction
+
+command! -nargs=+ -complete=command TabMessage call TabMessage(<q-args>)
+cabbrev echo <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'TabMessage' : 'echo')<CR>
+
+"fix cabal
 let $PATH=$PATH . ':/home/russ/.cabal/bin'
 
 " Save on losing focus

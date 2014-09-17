@@ -90,9 +90,11 @@ local git_where="$(parse_git_branch)"
 RPS1='$(git_prompt_string) '
 
 #TODO: notes right of directory
-PROMPT='%{$fg[white]%}%n@%M%{$reset_color%} [%{$fg[green]%}%~%{$reset_color%}] 
+PROMPT='%{$fg[white]%}%n@%M%{$reset_color%} [%?] [%{$fg[green]%}%~%{$reset_color%}] 
 %{$fg[white]%}$%{$reset_color%} '
 #RPROMPT='%M'
+
+preexec () { print -Pn "\e]2;%c%(!.#.$) $1\a" }
 
 # Keybinds {{{
 typeset -A key
@@ -161,6 +163,10 @@ set -U BROWSER 'firefox-nightly'
 # Aliases {{{
 
 source ~/.config/.aliases
+
+function shellcode () {
+    for i in `objdump -d $1 | sed -ne '/<main>/,/^ *$/ p' | tr '\t' ' ' | tr ' ' '\n' | egrep '^[0-9a-f]{2}$' ` ;  echo -n '\\x'$i
+}
 
 function shh () {
     ssh -t $1 'tmux has-session && tmux -2 attach || tmux -2'
