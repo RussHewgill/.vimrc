@@ -94,14 +94,14 @@ myPPlog handle screen = (dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP 
                 { ppOutput          = hPutStrLn handle
                 , ppCurrent         = dzenColor fg cwsbg . clickable . pad . deTagWS
                 , ppTitle           = dzenColor fg bg . wrap "^ca(3, xdotool key super+m)\
-                                \^ca(1, xdotool key super+n)  " "^ca()^ca()" . dzenEscape . shorten 30
+                                \^ca(1, xdotool key super+n) " "^ca()^ca()" . dzenEscape . shorten 30
                 , ppVisible         = dzenColor fg vwsbg . clickable . pad . deTagWS
                 , ppHidden          = dzenColor fg hwsbg . clickable . pad . deTagWS
                 , ppHiddenNoWindows = dzenColor emptywsfg hwsbg . clickable . showNamedWs . deTagWS
                 , ppSep             = ""
                 , ppWsSep           = "^fg(" ++ wssepbg ++ ")^r(2x30)"
                 , ppUrgent          = dzenColor fg "red"
-                , ppLayout          = const ""
+                , ppLayout          = (wrap " " (" ^fg(" ++ wssepbg ++ ")^r(2x30)")) . layoutifier
                 })
         where
             -- add dzen clickable tags to each workspace
@@ -112,7 +112,14 @@ myPPlog handle screen = (dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP 
             showNamedWs ws = if any (`elem` ws) ['a'..'z']
                                 then pad ws else ""
             -- remove per moniter tags from workspace
-            deTagWS ws = if elem '_' ws then fst $ break (=='_') ws else ws
+            deTagWS ws  = if elem '_' ws then fst $ break (=='_') ws else ws
+            layoutifier x = case x of
+                                 "Grid"          -> "$G"
+                                 "ReflectX Grid" -> "RG"
+                                 "Tall"          -> "$T"
+                                 "Mirror Tall"   -> "MT"
+                                 "ReflectX Tall" -> "RT"
+
 -- }}}
 
 -- Themes {{{
@@ -194,11 +201,10 @@ avoidMaster = W.modify' $ \c -> case c of
 mylayoutHook =  smartBorders
                 $ avoidStruts
                 $ onWorkspace (wss!!1) vimlayout 
-                $ onWorkspace (wss!!3) vimlayout 
                 $ onWorkspace (wss!!0) firefoxlayout 
                 $ mainlayout
 
-mainlayout = Mirror tiled ||| columns ||| Full
+mainlayout = Mirror tiled ||| reflectHoriz columns ||| columns
     where
         tiled = Tall { tallNMaster = nmaster, tallRatio=ratio, tallRatioIncrement=delta }
         nmaster = 1
@@ -212,6 +218,7 @@ firefoxlayout = reflectHoriz ff ||| Full
 vimlayout = Mirror Tall { tallNMaster = 1, tallRatio=(3%5), tallRatioIncrement=(3%100) } 
                 ||| Tall { tallNMaster = 1, tallRatio=(1%2), tallRatioIncrement=(3%100) }
                 ||| Grid
+                ||| reflectHoriz Grid
 
 columns = Tall { tallNMaster = 1, tallRatio=(1%2), tallRatioIncrement=(3%100) }
 
@@ -240,7 +247,7 @@ mywsso = filter ((=='0') . last) wss
 -- each monitor has 2 dzens, left for pplog and right for clock/date/music
 -- important:   -p,     don't timeout
 --              -e ''   disable close on right click
---              -y -1
+--              -y -1   bottom of screen
 mydzenclockl = "conky | dzen2 -xs 1 -ta r -x 800 " ++ dzenfont ++ dzenOpts
 mydzenclockr = "conky | dzen2 -xs 2 -ta r -x 800 " ++ dzenfont ++ dzenOpts
 
@@ -248,8 +255,7 @@ mydzenl   = "dzen2 -xs 1 -w 800 -ta l " ++ dzenfont ++ dzenOpts
 mydzenr   = "dzen2 -xs 2 -w 800 -ta l " ++ dzenfont ++ dzenOpts
 
 dzenOpts  = "-p -e '' -h 30 -y -1 -fg '" ++ fg ++ "' -bg '" ++ bg ++ "'"
-{-dzenfont = " -fn '-*-ubuntu-*-*-*-*-*-140-*-*-*-*-*-*' "-}
-dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-140-*-*-*-*-*-*' "
+dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-160-*-*-*-*-*-*' "
 
 -- }}}
 
@@ -258,7 +264,7 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-140-*-*-*-*-*-*' "
 scratchpads = [
     NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
   , NS "cmus" (xterm ++ "cmus -e cmus") ( title =? "cmus") tunes
-  , NS "ranger" (xterm ++ "ranger -e ranger") ( title =? "ranger") tunes
+  --, NS "ranger" (xterm ++ "ranger -e ranger") ( title =? "ranger") tunes
   , NS "notepad" ("exec gvim --servername notepad -f --role notepad ~/test/notepad") ( role =? "notepad") rect
   ]
   where
@@ -272,7 +278,7 @@ scratchpadBinds = [
           ("M-x" , namedScratchpadAction scratchpads "floatterm")
         , ("M-c" , namedScratchpadAction scratchpads "cmus")
         , ("M-p" , namedScratchpadAction scratchpads "notepad")
-        , ("M-e" , namedScratchpadAction scratchpads "ranger")
+        --, ("M-e" , namedScratchpadAction scratchpads "ranger")
         ]
 
 -- }}}
@@ -400,7 +406,7 @@ mykeysP =
         , ("M-t" , spawn "roxterm --profile=Default")
             --TODO: stop from launching more windows
         , ("M-g" , singlespawn "Firefox" "firefox")
-        {-, ("M-e" , spawn "xterm -e ranger" )-}
+        , ("M-e" , spawn "xterm -e ranger" )
         {-, ("M-s" , spawn "gvim --servername GVIM")-}
         , ("M-s" , spawn gvimcmd )
             -- Window Management
@@ -428,8 +434,7 @@ mykeysP =
         , ("M-<Pause>" , spawn "systemctl suspend")
         , ("M-<End>"   , spawn "~/.lockscreen.sh")
         , ("M-<Delete>"   , spawn "~/.lockscreen.sh")
-        , ("M-S-q" , spawn $ "pkill dzen2")
-        , ("M-q" , spawn myrestart)
+        , ("M-S-q" , spawn $ "pkill dzen2; sleep 1; " ++ myrestart )
         , ("M-S-<Delete>" , io (exitWith  ExitSuccess))
         {-, ("<F8>" , spawn "~/bin/autoclick.sh" )-}
         ]

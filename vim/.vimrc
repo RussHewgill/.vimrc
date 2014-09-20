@@ -20,7 +20,7 @@ Plugin 'tpope/vim-surround'
 Plugin 'tmhedberg/SimpylFold'
 Plugin 'godlygeek/tabular'
 Plugin 'Lokaltog/vim-easymotion'
-"Plugin 'Shougo/neocomplcache.vim'
+Plugin 'Shougo/neocomplcache.vim'
 Plugin 'eagletmt/neco-ghc'
 Plugin 'https://github.com/raichoo/haskell-vim'
 "Plugin 'https://github.com/kien/rainbow_parentheses.vim'
@@ -85,7 +85,6 @@ set undofile
 set autoread
 
 set wildmenu
-set wildignore=*.o,*~,*.pyc
 set cmdheight=2
 set scrolloff=3
 set cursorline
@@ -193,7 +192,7 @@ map H ^
 map L $
 
 inoremap jk <Esc>
-inoremap jh <Esc>i
+inoremap jj <Esc>i
 inoremap jl <Esc>la
 
 nnoremap <leader>tr :w<CR>:so %<cr>
@@ -221,6 +220,8 @@ nnoremap <Leader>tx :tabe ~/.xmonad/xmonad.hs<CR>
 nnoremap <Leader>tz :tabe ~/.zshrc<CR>
 nnoremap <Leader>ta :tabe ~/.config/.aliases<CR>
 
+nnoremap <Leader>f :w<CR>
+
 nmap <Leader>y "*y
 vmap <Leader>y "*y
 nmap <Leader>d "*d
@@ -229,7 +230,6 @@ nmap <Leader>p "*p
 vmap <Leader>p "*p
 
 "Tabularize
-nnoremap <Leader>= :Tabularize /=<CR>
 nnoremap <Leader><Tab> :Tabularize /
 
 nnoremap ; :
@@ -244,6 +244,11 @@ noremap <M-O> O
 "Split Commands
 
 nnoremap <Leader>w <C-w>v<C-w>l
+nnoremap <Leader>e <C-w>n
+nnoremap <Leader>- <C-w>-
+nnoremap <Leader>= <C-w>=
+nnoremap <Leader>+ <C-w>+
+
 nnoremap <C-h> <C-w>h
 nnoremap <C-k> <C-w>k
 nnoremap <C-j> <C-w>j
@@ -287,6 +292,17 @@ nnoremap ZX zO
 
 let g:ctrlp_show_hidden = 1
 
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.cache*,*.hi,*~,*.o
+
+let g:ctrlp_max_files = 100000
+
+let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
+
+"if executable('ag')
+    "let g:ctrlp_user_command = 'ag %s --ignore ".cache" --ignore "tmp" --ignore "*.swp" --ignore "*.so" --hidden --nocolor -l -g ""'
+    "let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
+"endif
+
 " }}}
 
 
@@ -303,7 +319,7 @@ let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/Ultisnips"
 "{{{
 
 let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"
-let g:syntastic_asm_dialect = 'nasm'
+"let g:syntastic_asm_dialect = 'nasm'
 
 "}}}
 
@@ -359,8 +375,10 @@ hi EasyMotionShade guifg=#998f84
 " {{{
 
 "au Filetype python set omnifunc=pythoncomplete#Complete
-"let g:SuperTabDefaultCompletionType = "context"
-"set completeopt=menuone,longest,preview
+let g:SuperTabDefaultCompletionType = "context"
+let g:SuperTabNoCompleteAfter = ['^', '\s', 'do']
+
+set completeopt=menuone,longest,preview
 
 " }}}
 
@@ -378,7 +396,7 @@ let g:airline#extensions#Syntastic#enabled = 0
 "{{{
 
 "edit home
-cabbrev E <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'e ~/' : 'e')<CR>
+cabbrev E <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'e ~/ <Backspace>' : 'E')<CR>
 
 "send result of cmd into buffer
 function! TabMessage(cmd)
@@ -389,7 +407,7 @@ function! TabMessage(cmd)
 endfunction
 
 command! -nargs=+ -complete=command TabMessage call TabMessage(<q-args>)
-cabbrev echo <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'TabMessage' : 'echo')<CR>
+cabbrev ech <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'TabMessage' : 'ech')<CR>
 
 "fix cabal
 let $PATH=$PATH . ':/home/russ/.cabal/bin'
