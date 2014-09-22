@@ -229,11 +229,20 @@ vmap <Leader>d "*d
 nmap <Leader>p "*p
 vmap <Leader>p "*p
 
+nmap <Leader><Leader>y "+y
+vmap <Leader><Leader>y "+y
+nmap <Leader><Leader>d "+d
+vmap <Leader><Leader>d "+d
+nmap <Leader><Leader>p "+p
+vmap <Leader><Leader>p "+p
+
 "Tabularize
 nnoremap <Leader><Tab> :Tabularize /
 
 nnoremap ; :
 vnoremap ; :
+noremap <C-f> ;
+noremap <C-c> ,
 
 nnoremap o o<esc>
 nnoremap O O<esc>

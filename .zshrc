@@ -164,6 +164,14 @@ set -U BROWSER 'firefox-nightly'
 
 source ~/.config/.aliases
 
+function b64 () {
+    echo "$@" | base64 -d
+}
+
+function r13 () {
+    echo "$@" | tr '[A-Za-z]' '[N-ZA-Mn-za-m]'
+}
+
 function shellcode () {
     for i in `objdump -d $1 | sed -ne '/<main>/,/^ *$/ p' | tr '\t' ' ' | tr ' ' '\n' | egrep '^[0-9a-f]{2}$' ` ;  echo -n '\\x'$i
 }

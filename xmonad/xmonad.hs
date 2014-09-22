@@ -101,7 +101,7 @@ myPPlog handle screen = (dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP 
                 , ppSep             = ""
                 , ppWsSep           = "^fg(" ++ wssepbg ++ ")^r(2x30)"
                 , ppUrgent          = dzenColor fg "red"
-                , ppLayout          = (wrap " " (" ^fg(" ++ wssepbg ++ ")^r(2x30)")) . layoutifier
+                , ppLayout          = (wrap ("^fg(" ++ wssepbg ++ ")^r(2x30)^fg() ") (" ^fg(" ++ wssepbg ++ ")^r(2x30)")) . layoutifier
                 })
         where
             -- add dzen clickable tags to each workspace
@@ -114,9 +114,9 @@ myPPlog handle screen = (dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP 
             -- remove per moniter tags from workspace
             deTagWS ws  = if elem '_' ws then fst $ break (=='_') ws else ws
             layoutifier x = case x of
-                                 "Grid"          -> "$G"
+                                 "Grid"          -> "NG"
                                  "ReflectX Grid" -> "RG"
-                                 "Tall"          -> "$T"
+                                 "Tall"          -> "NT"
                                  "Mirror Tall"   -> "MT"
                                  "ReflectX Tall" -> "RT"
 
@@ -263,11 +263,14 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-160-*-*-*-*-*-*' "
 
 scratchpads = [
     NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
+  {-, NS "floatterm2" (roxterm ++ "floatterm2") ( title =? "floatterm2") rect2-}
   , NS "cmus" (xterm ++ "cmus -e cmus") ( title =? "cmus") tunes
   --, NS "ranger" (xterm ++ "ranger -e ranger") ( title =? "ranger") tunes
   , NS "notepad" ("exec gvim --servername notepad -f --role notepad ~/test/notepad") ( role =? "notepad") rect
   ]
   where
+    {-rect1 = customFloating $ W.RationalRect 0 0 0.5 0.4-}
+    {-rect2 = customFloating $ W.RationalRect 0.5 0 0.5 0.4-}
     tunes = customFloating $ W.RationalRect 0 0 1 0.5
     rect = customFloating $ W.RationalRect 0 0 1 0.4
     roxterm = "roxterm --separate --profile=scratchpad -T "
@@ -275,6 +278,7 @@ scratchpads = [
     role = stringProperty "WM_WINDOW_ROLE"
 
 scratchpadBinds = [
+          {-("M-x" , namedScratchpadAction scratchpads "floatterm" >> namedScratchpadAction scratchpads "floatterm2">> windowGo L False)-}
           ("M-x" , namedScratchpadAction scratchpads "floatterm")
         , ("M-c" , namedScratchpadAction scratchpads "cmus")
         , ("M-p" , namedScratchpadAction scratchpads "notepad")
@@ -395,20 +399,24 @@ mykeysP =
         , ("<XF86AudioLowerVolume>" , spawn "amixer -q set Master 2%- unmute")
         , ("<XF86AudioRaiseVolume>" , spawn "amixer -q set Master 2%+ unmute")
         , ("<XF86AudioMute>" , spawn "amixer set Master toggle")
+
             -- Tunes
         , ("<XF86AudioPlay>" , spawn "cmus-remote -u")
         , ("<XF86AudioStop>" , spawn "cmus-remote -s")
         , ("<XF86AudioPrev>" , spawn "cmus-remote -r")
         , ("<XF86AudioNext>" , spawn "cmus-remote -n")
         , ("M-o" , spawn "cmus-remote -u")
+        , ("M-v b" , spawn "cmus-remote -n")
+        , ("M-v z" , spawn "cmus-remote -r")
+
             -- Launch Apps
         , ("M-d" , spawn "gmrun")
         , ("M-t" , spawn "roxterm --profile=Default")
             --TODO: stop from launching more windows
         , ("M-g" , singlespawn "Firefox" "firefox")
         , ("M-e" , spawn "xterm -e ranger" )
-        {-, ("M-s" , spawn "gvim --servername GVIM")-}
         , ("M-s" , spawn gvimcmd )
+
             -- Window Management
         , ("M-h" , windowGo L False)
         , ("M-j" , windowGo D False)
@@ -418,6 +426,7 @@ mykeysP =
         , ("M-S-j" , windowSwap D False)
         , ("M-S-k" , windowSwap U False)
         , ("M-S-l" , windowSwap R False)
+
             --TODO: maybe ,. regular resize, C-,. finegrain?
         , ("M-," , sendMessage Shrink)
         , ("M-." , sendMessage Expand)
@@ -429,6 +438,7 @@ mykeysP =
         , ("M-f" , withFocused $ windows . W.sink)
         , ("M1-<F4>" , kill)
         {-, ("M-p" , windows W.shiftMaster )-}
+
             -- lockscreen just picks a random wallpaper from a dual monitor
             -- folder and starts i3lock
         , ("M-<Pause>" , spawn "systemctl suspend")
@@ -437,8 +447,7 @@ mykeysP =
         , ("M-S-q" , spawn $ "pkill dzen2; sleep 1; " ++ myrestart )
         , ("M-S-<Delete>" , io (exitWith  ExitSuccess))
         {-, ("<F8>" , spawn "~/bin/autoclick.sh" )-}
-        ]
-        ++
+        ] ++
         scratchpadBinds
         where
           gvimcmd = "gvim --servername GVIM --remote-send '<Esc>:tabnew<CR>'; if [[ $? == 1 ]]; then gvim --servername GVIM; fi"

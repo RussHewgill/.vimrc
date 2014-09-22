@@ -4,6 +4,7 @@ alias ls='ls --group-directories-first --color=always'
 alias lsd='ls -d */'
 alias :q='exit'
 alias tmux='tmux -2'
+alias rot13="tr '[A-Za-z]' '[N-ZA-Mn-za-m]'"
 alias hask='clear; ghci'
 alias hhask='cd ~/programs/haskell/; clear; ghci'
 alias xmds='cd ~/.xmonad; clear; ghci xmonad.hs'
