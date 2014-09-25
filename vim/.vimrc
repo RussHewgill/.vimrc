@@ -14,21 +14,22 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 Plugin 'scrooloose/nerdcommenter' 
-Plugin 'ervandew/supertab'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-surround'
 Plugin 'tmhedberg/SimpylFold'
 Plugin 'godlygeek/tabular'
 Plugin 'Lokaltog/vim-easymotion'
-Plugin 'Shougo/neocomplcache.vim'
-Plugin 'eagletmt/neco-ghc'
-Plugin 'https://github.com/raichoo/haskell-vim'
-"Plugin 'https://github.com/kien/rainbow_parentheses.vim'
+"Plugin 'Shougo/neocomplcache.vim'
+"Plugin 'eagletmt/neco-ghc'
+"Plugin 'https://github.com/raichoo/haskell-vim'
 Plugin 'https://github.com/kien/ctrlp.vim'
 Plugin 'https://github.com/SirVer/ultisnips'
 Plugin 'https://github.com/honza/vim-snippets'
-
 "Plugin 'davidhalter/jedi-vim'
+Plugin 'https://github.com/Valloric/YouCompleteMe'
+"Plugin 'ervandew/supertab'
+
+"Plugin 'https://github.com/kien/rainbow_parentheses.vim'
 "Plugin 'michaeljsmith/vim-indent-object'
 "Plugin 'terryma/vim-multiple-cursors'
 "Plugin 'dag/vim2hs' 
@@ -135,8 +136,8 @@ set hlsearch
 nmap <silent> ,, :let @/=""<cr>
 vmap <silent> ,, :let @/=""<cr>
 
-nnoremap <tab> %
-vnoremap <tab> %
+"nnoremap <tab> %
+"vnoremap <tab> %
 "}}}
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -212,8 +213,8 @@ nnoremap <Leader>to :tabonly<cr>
 nnoremap <Leader>tq :tabclose<cr>
 nnoremap <Leader>tm :tabmove
 
-nnoremap <Leader>ty :tabn<CR>
-nnoremap <Leader>tt :tabp<CR>
+nnoremap <Leader>k :tabn<CR>
+nnoremap <Leader>j :tabp<CR>
 
 nnoremap <Leader>tv :tabe ~/.vimrc<CR>
 nnoremap <Leader>tx :tabe ~/.xmonad/xmonad.hs<CR>
@@ -314,11 +315,26 @@ let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 
 " }}}
 
+" YouCompleteMe
+" {{{
+
+"let g:ycm_key_list_select_completion = ['<C-TAB>', '<Down>', '<C-Space>']
+"let g:ycm_key_list_previous_completion = ['<C-S-TAB>', '<Up>']
+"let g:SuperTabDefaultCompletionType = '<C-Tab>'
+"let g:ycm_key_invoke_completion = '<Tab>'
+let g:ycm_register_as_syntastic_checker = 1
+let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_key_detailed_diagnostics = ''
+
+nnoremap <leader>h :YcmCompleter GoTo<CR>
+
+" }}}
 
 " Ultisnips
 " {{{
 
-let g:UltiSnipsExpandTrigger="<tab>"
+"let g:UltiSnipsExpandTrigger="<tab>"
 
 let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/Ultisnips"
 
@@ -332,11 +348,13 @@ let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"
 
 let g:syntastic_mode_map = { 'mode': 'active',
                         \ 'active_filetypes': [],
-                        \ 'passive_filetypes': ['python'] }
+                        \ 'passive_filetypes': [] }
+
+let g:syntastic_python_pylint_rcfile='/home/russ/.pylintrc'
 
 let g:syntastic_auto_loc_list=0
-nnoremap <silent> <F5> :SyntasticCheck<CR>:Errors<CR>
-nnoremap <silent> <F6> :lclose<CR>:SyntasticReset<CR>
+nnoremap <silent> <leader>b <esc>:Errors<CR>
+nnoremap <silent> <leader>v :lclose<CR>
 
 "}}}
 
@@ -355,17 +373,17 @@ nnoremap <silent> <F6> :lclose<CR>:SyntasticReset<CR>
 " neco-ghc / neocompl
 " {{{
 
-let g:neocomplcache_enable_at_startup = 1
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+"let g:neocomplcache_enable_at_startup = 1
+"autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 
-set completeopt+=longest
+""set completeopt+=longest
 
-let g:neocomplcache_enable_ignore_case = 1
-let g:neocomplcache_enable_smart_case = 1
-let g:neocomplcache_enable_auto_select = 1
-let g:neocomplcache_enable_fuzzy_completion = 1
-let g:neocomplcache_enable_camel_case_completion = 1
-let g:neocomplcache_enable_underbar_completion = 1
+"let g:neocomplcache_enable_ignore_case = 1
+"let g:neocomplcache_enable_smart_case = 1
+"let g:neocomplcache_enable_auto_select = 1
+"let g:neocomplcache_enable_fuzzy_completion = 1
+"let g:neocomplcache_enable_camel_case_completion = 1
+"let g:neocomplcache_enable_underbar_completion = 1
 
 " }}}
 
@@ -373,7 +391,8 @@ let g:neocomplcache_enable_underbar_completion = 1
 "{{{
 
 "autocmd FileType python setlocal completeopt-=preview
-"let g:jedi#popup_on_dot = 0
+"let g:jedi#popup_on_dot = 1
+"let g:jedi#popup_select_first = 1
 
 "}}}
 
@@ -394,10 +413,13 @@ hi EasyMotionShade guifg=#998f84
 " {{{
 
 "au Filetype python set omnifunc=pythoncomplete#Complete
-let g:SuperTabDefaultCompletionType = "context"
-let g:SuperTabNoCompleteAfter = ['^', '\s', 'do']
+"let g:SuperTabDefaultCompletionType = "context"
+"let g:SuperTabContextDefaultCompletionType = "<c-n>"
+"let g:SuperTabNoCompleteAfter = ['^', '\s', 'do']
+"let g:SuperTabLongestEnhanced = 1
 
-set completeopt=menuone,longest,preview
+"set completeopt=menuone,longest,preview
+set completeopt=longest
 
 " }}}
 

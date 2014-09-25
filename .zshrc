@@ -153,6 +153,7 @@ export EDITOR='vim'
 export JAVA_HOME=/opt/java/
 export LANG=en_US.UTF-8
 export PATH=$HOME/bin:/usr/local/bin:$PATH:/home/russ/.cabal/bin
+export JAVA_HOME=
 
 # }}}
 
