@@ -330,6 +330,14 @@ let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/Ultisnips"
 let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"
 "let g:syntastic_asm_dialect = 'nasm'
 
+let g:syntastic_mode_map = { 'mode': 'active',
+                        \ 'active_filetypes': [],
+                        \ 'passive_filetypes': ['python'] }
+
+let g:syntastic_auto_loc_list=0
+nnoremap <silent> <F5> :SyntasticCheck<CR>:Errors<CR>
+nnoremap <silent> <F6> :lclose<CR>:SyntasticReset<CR>
+
 "}}}
 
 " Rainbow Parens 
@@ -348,7 +356,9 @@ let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"
 " {{{
 
 let g:neocomplcache_enable_at_startup = 1
-"autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+
+set completeopt+=longest
 
 let g:neocomplcache_enable_ignore_case = 1
 let g:neocomplcache_enable_smart_case = 1
@@ -452,9 +462,13 @@ augroup end
 
 "au Filetype haskell match HaskBrackets /\[\]/
 
-au BufNewFile,BufRead *.fish set filetype=sh
+"python
+let g:syntastic_python_python_exec = '/usr/bin/python'
+au BufRead,BufNewFile *.py2 set filetype=python
+au BufRead,BufNewFile *.py2 let g:syntastic_python_python_exec = '/usr/bin/python2'
 
 " change this if i ever need to use perl
+" Welp, perl
 "au BufNewFile,BufRead *.pl set filetype=prolog
 
 " }}}

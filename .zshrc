@@ -94,7 +94,7 @@ PROMPT='%{$fg[white]%}%n@%M%{$reset_color%} [%?] [%{$fg[green]%}%~%{$reset_color
 %{$fg[white]%}$%{$reset_color%} '
 #RPROMPT='%M'
 
-preexec () { print -Pn "\e]2;./%c%(!.#.$) $1\a" }
+preexec () { print -Pn '\e]2;./%c%(!.#.$) $1\a' }
 
 # Keybinds {{{
 typeset -A key
