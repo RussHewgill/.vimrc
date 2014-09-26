@@ -13,7 +13,8 @@ call vundle#begin()
 
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
-Plugin 'scrooloose/nerdcommenter' 
+"Plugin 'scrooloose/nerdcommenter' 
+Plugin 'https://github.com/tpope/vim-commentary'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-surround'
 Plugin 'tmhedberg/SimpylFold'
@@ -268,6 +269,9 @@ noremap <C-y> 3<C-y>
 noremap <C-e> 3<C-e>
 
 "nnoremap <leader><leader>b :r~/.vim/snippets/commentbreak.txt<CR>jla
+
+nnoremap <leader>c gc
+vnoremap <leader>c gc
 
 " Move a line with alt+[jk], indent with alt +[hl]
 nnoremap <A-j> :m+<CR>==
