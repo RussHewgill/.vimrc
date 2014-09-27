@@ -13,16 +13,16 @@ call vundle#begin()
 
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
-"Plugin 'scrooloose/nerdcommenter' 
-Plugin 'https://github.com/tpope/vim-commentary'
+Plugin 'scrooloose/nerdcommenter' 
+" Plugin 'https://github.com/tpope/vim-commentary'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-surround'
 Plugin 'tmhedberg/SimpylFold'
 Plugin 'godlygeek/tabular'
 Plugin 'Lokaltog/vim-easymotion'
 "Plugin 'Shougo/neocomplcache.vim'
-"Plugin 'eagletmt/neco-ghc'
-"Plugin 'https://github.com/raichoo/haskell-vim'
+Plugin 'eagletmt/neco-ghc'
+Plugin 'https://github.com/raichoo/haskell-vim'
 Plugin 'https://github.com/kien/ctrlp.vim'
 Plugin 'https://github.com/SirVer/ultisnips'
 Plugin 'https://github.com/honza/vim-snippets'
@@ -137,8 +137,8 @@ set hlsearch
 nmap <silent> ,, :let @/=""<cr>
 vmap <silent> ,, :let @/=""<cr>
 
-"nnoremap <tab> %
-"vnoremap <tab> %
+nnoremap <tab> %
+vnoremap <tab> %
 "}}}
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -322,14 +322,12 @@ let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 " YouCompleteMe
 " {{{
 
-"let g:ycm_key_list_select_completion = ['<C-TAB>', '<Down>', '<C-Space>']
-"let g:ycm_key_list_previous_completion = ['<C-S-TAB>', '<Up>']
-"let g:SuperTabDefaultCompletionType = '<C-Tab>'
-"let g:ycm_key_invoke_completion = '<Tab>'
-let g:ycm_register_as_syntastic_checker = 1
-let g:ycm_collect_identifiers_from_tags_files = 1
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_key_detailed_diagnostics = ''
+let g:ycm_register_as_syntastic_checker                 = 1
+let g:ycm_collect_identifiers_from_tags_files           = 1
+let g:ycm_seed_identifiers_with_syntax                  = 1
+let g:ycm_key_detailed_diagnostics                      = ''
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_semantic_triggers = {'haskell' : ['.']}
 
 nnoremap <leader>h :YcmCompleter GoTo<CR>
 

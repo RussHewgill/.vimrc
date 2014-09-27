@@ -25,7 +25,7 @@ import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.WorkspaceCompare
 import qualified XMonad.StackSet as W
-import qualified XMonad.Hooks.InsertPosition as H
+{-import qualified XMonad.Hooks.InsertPosition as H-}
 import XMonad.Util.WindowProperties
 import XMonad.Layout.IndependentScreens
 import XMonad.Layout.Reflect
