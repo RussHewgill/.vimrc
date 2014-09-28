@@ -263,7 +263,7 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-160-*-*-*-*-*-*' "
 scratchpads = [
     NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
   {-, NS "floatterm2" (roxterm ++ "floatterm2") ( title =? "floatterm2") rect2-}
-  , NS "cmus" (xterm ++ "cmus -e cmus") ( title =? "cmus") tunes
+  , NS "cmus" (xterm ++ "cmus -e ~/bin/cmus.sh") ( title =? "cmus") tunes
   --, NS "ranger" (xterm ++ "ranger -e ranger") ( title =? "ranger") tunes
   , NS "notepad" ("exec gvim --servername notepad -f --role notepad ~/test/notepad") ( role =? "notepad") rect
   ]

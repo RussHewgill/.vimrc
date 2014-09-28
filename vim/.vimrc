@@ -29,6 +29,7 @@ Plugin 'https://github.com/honza/vim-snippets'
 "Plugin 'davidhalter/jedi-vim'
 Plugin 'https://github.com/Valloric/YouCompleteMe'
 "Plugin 'ervandew/supertab'
+"Plugin 'https://github.com/nathanaelkane/vim-indent-guides'
 
 "Plugin 'https://github.com/kien/rainbow_parentheses.vim'
 "Plugin 'michaeljsmith/vim-indent-object'
@@ -106,7 +107,6 @@ set t_vb=
 "set tm=500
 
 syntax on
-filetype on
 
 set wrap
 set textwidth=79
@@ -273,6 +273,9 @@ noremap <C-e> 3<C-e>
 nnoremap <leader>c gc
 vnoremap <leader>c gc
 
+nnoremap Q @@
+vnoremap Q @@
+
 " Move a line with alt+[jk], indent with alt +[hl]
 nnoremap <A-j> :m+<CR>==
 nnoremap <A-k> :m-2<CR>==
@@ -322,12 +325,16 @@ let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 " YouCompleteMe
 " {{{
 
+"let g:ycm_path_to_python_interpreter                    = '/usr/bin/python'
 let g:ycm_register_as_syntastic_checker                 = 1
 let g:ycm_collect_identifiers_from_tags_files           = 1
 let g:ycm_seed_identifiers_with_syntax                  = 1
 let g:ycm_key_detailed_diagnostics                      = ''
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_semantic_triggers = {'haskell' : ['.']}
+let g:ycm_semantic_triggers                             = { 'haskell' : ['.'],  
+                            \ 'bash' : ['#!'], 'python' : [] }
+
+"autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 
 nnoremap <leader>h :YcmCompleter GoTo<CR>
 
@@ -336,8 +343,7 @@ nnoremap <leader>h :YcmCompleter GoTo<CR>
 " Ultisnips
 " {{{
 
-"let g:UltiSnipsExpandTrigger="<tab>"
-
+"let g:UltiSnipsExpandTrigger="<Tab>"
 let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/Ultisnips"
 
 " }}}
@@ -348,57 +354,37 @@ let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/Ultisnips"
 let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"
 "let g:syntastic_asm_dialect = 'nasm'
 
+let g:syntastic_python_python_exec = '/usr/bin/python'
+
 let g:syntastic_mode_map = { 'mode': 'active',
                         \ 'active_filetypes': [],
                         \ 'passive_filetypes': [] }
 
+let g:syntastic_python_checkers = ['python', 'pylint']
+
 let g:syntastic_python_pylint_rcfile='/home/russ/.pylintrc'
 
 let g:syntastic_auto_loc_list=0
-nnoremap <silent> <leader>b <esc>:Errors<CR>
+nnoremap <silent> <leader>b :SyntasticCheck mypy<CR>:Errors<CR>
 nnoremap <silent> <leader>v :lclose<CR>
+vnoremap <silent> <leader>b :SyntasticCheck mypy<CR>:Errors<CR>
+vnoremap <silent> <leader>v :lclose<CR>
 
 "}}}
 
-" Rainbow Parens 
-" {{{
-
-"au VimEnter * RainbowParenthesesToggle
-"au Syntax * RainbowParenthesesLoadRound
-"au Syntax * RainbowParenthesesLoadSquare
-"au Syntax * RainbowParenthesesLoadBraces
-"au Syntax * if &ft != 'haskell' | RainbowParenthesesLoadBraces
-
-
-" }}}
-
-" neco-ghc / neocompl
-" {{{
-
-"let g:neocomplcache_enable_at_startup = 1
-"autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-
-""set completeopt+=longest
-
-"let g:neocomplcache_enable_ignore_case = 1
-"let g:neocomplcache_enable_smart_case = 1
-"let g:neocomplcache_enable_auto_select = 1
-"let g:neocomplcache_enable_fuzzy_completion = 1
-"let g:neocomplcache_enable_camel_case_completion = 1
-"let g:neocomplcache_enable_underbar_completion = 1
-
-" }}}
-
-"Jedi-vim
+"Haskell-vim
 "{{{
 
-"autocmd FileType python setlocal completeopt-=preview
-"let g:jedi#popup_on_dot = 1
-"let g:jedi#popup_select_first = 1
+let g:haskell_indent_if    = 4
+let g:haskell_indent_case  = 4
+let g:haskell_indent_let   = 4
+let g:haskell_indent_where = 4
+let g:haskell_indent_do    = 4
+let g:haskell_indent_in    = 4
 
 "}}}
 
-"Easymotion s=>etup
+"Easymotion setup
 "{{{
 
 "let g:EasyMotion_do_mapping = 0
@@ -487,7 +473,8 @@ augroup end
 "au Filetype haskell match HaskBrackets /\[\]/
 
 "python
-let g:syntastic_python_python_exec = '/usr/bin/python'
+
+
 au BufRead,BufNewFile *.py2 set filetype=python
 au BufRead,BufNewFile *.py2 let g:syntastic_python_python_exec = '/usr/bin/python2'
 
