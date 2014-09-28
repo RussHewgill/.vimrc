@@ -268,8 +268,6 @@ nnoremap <C-l> <C-w>l
 noremap <C-y> 3<C-y>
 noremap <C-e> 3<C-e>
 
-"nnoremap <leader><leader>b :r~/.vim/snippets/commentbreak.txt<CR>jla
-
 nnoremap <leader>c gc
 vnoremap <leader>c gc
 
@@ -343,7 +341,7 @@ nnoremap <leader>h :YcmCompleter GoTo<CR>
 " Ultisnips
 " {{{
 
-"let g:UltiSnipsExpandTrigger="<Tab>"
+let g:UltiSnipsExpandTrigger="<C-s>"
 let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/Ultisnips"
 
 " }}}
