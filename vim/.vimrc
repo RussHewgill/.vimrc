@@ -30,14 +30,7 @@ Plugin 'https://github.com/honza/vim-snippets'
 Plugin 'https://github.com/Valloric/YouCompleteMe'
 "Plugin 'ervandew/supertab'
 "Plugin 'https://github.com/nathanaelkane/vim-indent-guides'
-
-"Plugin 'https://github.com/kien/rainbow_parentheses.vim'
-"Plugin 'michaeljsmith/vim-indent-object'
-"Plugin 'terryma/vim-multiple-cursors'
-"Plugin 'dag/vim2hs' 
-"Plugin 'travitch/hasksyn'
-"Plugin 'Shougo/vimproc.vim'
-"Plugin 'eagletmt/ghcmod-vim'
+Plugin 'https://github.com/bruno-/vim-husk'
 
 "Plugin 'sjl/badwolf'
 Plugin 'russhewgill/badwolf'
@@ -46,7 +39,6 @@ Plugin 'altercation/vim-colors-solarized'
 Plugin 'tomasr/molokai'
 Plugin 'tpope/vim-vividchalk'
 Plugin 'https://github.com/nanotech/jellybeans.vim'
-
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -155,9 +147,9 @@ set background=dark
 
 if has("gui_running")
     let g:badwolf_darkgutter = 1
-    "colorscheme badwolf
     colorscheme badwolf
 
+    set t_Co=256
     set guifont=Inconsolata\ Medium\ 12
     set guioptions-=T
     set guioptions-=e
@@ -265,8 +257,11 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-j> <C-w>j
 nnoremap <C-l> <C-w>l
 
-noremap <C-y> 3<C-y>
-noremap <C-e> 3<C-e>
+noremap <C-y> 5<C-y>
+noremap <C-e> 5<C-e>
+
+"noremap <C-u> 14<C-y>
+"noremap <C-d> 14<C-e>
 
 nnoremap <leader>c gc
 vnoremap <leader>c gc
@@ -406,6 +401,14 @@ hi EasyMotionShade guifg=#998f84
 
 "set completeopt=menuone,longest,preview
 set completeopt=longest
+
+" }}}
+
+" NERDCommenter
+" {{{
+
+map <leader>cc <plug>NERDCommenterToggle
+map <leader>ci <plug>NERDCommenterComment
 
 " }}}
 

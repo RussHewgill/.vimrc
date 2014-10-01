@@ -25,12 +25,13 @@ import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.WorkspaceCompare
 import qualified XMonad.StackSet as W
-{-import qualified XMonad.Hooks.InsertPosition as H-}
 import XMonad.Util.WindowProperties
 import XMonad.Layout.IndependentScreens
 import XMonad.Layout.Reflect
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Layout.Grid
+import XMonad.Prompt
+import XMonad.Prompt.Input
 
 import System.IO
 import System.Exit
@@ -51,7 +52,7 @@ main = do
     
     -- only spawn second set of dzen bars when 2+ monitors are connected
     numscreens <- countScreens
-    if numscreens == 1 
+    if numscreens == 1
         then do xmonad $ runbars laptopconf ldzenproc Nothing
         else do
         rdzenproc <- spawnPipe $ mydzenr
@@ -218,6 +219,7 @@ firefoxlayout = reflectHoriz ff ||| Full
 vimlayout = Mirror Tall { tallNMaster = 1, tallRatio=(3%5), tallRatioIncrement=(3%100) } 
                 ||| Grid
                 ||| reflectHoriz Grid
+                ||| Tall { tallNMaster = 1, tallRatio=(1%2), tallRatioIncrement=(3%100) }
 
 columns = Tall { tallNMaster = 1, tallRatio=(1%2), tallRatioIncrement=(3%100) }
 
@@ -265,7 +267,7 @@ scratchpads = [
   {-, NS "floatterm2" (roxterm ++ "floatterm2") ( title =? "floatterm2") rect2-}
   , NS "cmus" (xterm ++ "cmus -e ~/bin/cmus.sh") ( title =? "cmus") tunes
   --, NS "ranger" (xterm ++ "ranger -e ranger") ( title =? "ranger") tunes
-  , NS "notepad" ("exec gvim --servername notepad -f --role notepad ~/test/notepad") ( role =? "notepad") rect
+  , NS "notepad" ("exec gvim --servername notepad -f --role notepad ~/Documents/notepad") ( role =? "notepad") rect
   ]
   where
     {-rect1 = customFloating $ W.RationalRect 0 0 0.5 0.4-}
@@ -410,6 +412,7 @@ mykeysP =
 
             -- Launch Apps
         , ("M-d" , spawn "gmrun")
+        {-, ("M-d" , (inputPrompt defaultXPConfig "wat" ?+ spawn) )-}
         , ("M-t" , spawn "roxterm --profile=Default")
             --TODO: stop from launching more windows
         , ("M-g" , singlespawn "Firefox" "firefox")
