@@ -347,6 +347,8 @@ let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/Ultisnips"
 let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"
 "let g:syntastic_asm_dialect = 'nasm'
 
+let g:syntastic_c_checkers = [ 'gcc' ]
+
 let g:syntastic_python_python_exec = '/usr/bin/python'
 
 let g:syntastic_mode_map = { 'mode': 'active',
