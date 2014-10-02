@@ -46,6 +46,7 @@ import Data.Maybe
 main = do
     spawn $ "~/bin/wp"
     spawn "unclutter -grab"
+    spawn "wmname LG3D"
 
     ldzenproc <- spawnPipe $ mydzenl
     spawn $ mydzenclockl
