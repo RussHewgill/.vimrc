@@ -158,7 +158,7 @@ mymanagehook = composeAll . concat $
     {-, [className =? "Gvim"          --> doShift (wss!!1) ]-}
     , [className =? "Gvim"          --> doF W.swapMaster ]
     , [className =? "Gmrun"         --> doSideFloat CW   ]
-    {-, [className =? "Gmrun"         --> doF W.focusUp   ]-}
+    , [className =? "Yakuake"         --> doFloat          ]
     , [className =? "Xmessage"      --> doFloat          ]
     , [className =? "Gsimplecal"    --> placeHook (withGaps (0,0,30,0) $ underMouse (0,0)) ]
     , [isFullscreen                 --> doFullFloat      ]
@@ -283,7 +283,7 @@ scratchpadBinds = [
           {-("M-x" , namedScratchpadAction scratchpads "floatterm" >> namedScratchpadAction scratchpads "floatterm2">> windowGo L False)-}
           ("M-x" , namedScratchpadAction scratchpads "floatterm")
         , ("M-c" , namedScratchpadAction scratchpads "cmus")
-        , ("M-p" , namedScratchpadAction scratchpads "notepad")
+        , ("M-z" , namedScratchpadAction scratchpads "notepad")
         --, ("M-e" , namedScratchpadAction scratchpads "ranger")
         ]
 
@@ -457,6 +457,7 @@ mykeysP =
 
 notKeysP = 
     [
+    "M-p"
     ]
 
 -- }}}
