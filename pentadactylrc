@@ -1,0 +1,98 @@
+"hg7108
+
+loadplugins '\.(js|penta)$'
+group user
+
+hi Normal -a font-size:16px !important;
+hi FontFixed font-family: "Inconsolata Medium" !important; font-size: 16pt !important;
+
+style -name=no-statusline-zoom-indicator chrome://* #dactyl-statusline-field-zoomlevel { display: none; }
+
+hi HintElem ;
+
+highlight Hint font-family: "Droid Sans Mono" !important; margin: -.2ex; padding: 2px !important; outline: 1px solid rgba(0, 0, 0, 1); background: rgba(255, 215, 110, 1); color: black; font-size: 9pt !important;
+
+nmap a <nop>
+
+map -modes=n -b ; :
+map -modes=n -b : ;
+map -modes=n,v -b vf ;;
+
+"Collapse/Expand Tree
+map -b -modes=n,v e :js gBrowser.treeStyleTab.collapseExpandSubtree(gBrowser.selectedTab, false)<CR>
+map -b -modes=n,v E :js gBrowser.treeStyleTab.collapseExpandSubtree(gBrowser.selectedTab, true)<CR>
+
+"Close/reopen tab
+"map -modes=n,v -b x d1gT
+"map -modes=n,v -b x d
+"map -modes=n,v -b X u
+map x <pass>
+map X <pass>
+map -b <C-f> ;t
+
+"Open
+map -modes=n,v -b o O
+map -modes=n,v -b O o
+
+map -modes=n,v -b p P
+map -modes=n,v -b P p
+
+"Tabs
+map -b -modes=n,v w :b<space>
+
+"Scrolling
+map -count -modes=n,v j -b <count>5j
+map -count -modes=n,v J -b <count>gt
+map -count -modes=n,v k -b <count>5k
+map -count -modes=n,v K -b <count>gT
+map -modes=n,v -b d <C-d>
+map -modes=n,v -b u <C-u>
+
+"Hints
+set hintkeys=fjdkslaghrueiwoncm
+
+map -modes=n,v -b f F
+map -modes=n,v -b F f
+map -modes=n,v -b af g;b
+
+"Stop
+map -modes=n,v -b s <C-c>
+
+"Save
+map -modes=n,v -b <C-i> ;i
+map -modes=n,v -b <C-s> :w <tab><cr>
+
+"Zooming
+map -- - <pass>
+map + <pass>
+"map -b zi +
+"map -b zo -
+
+"NoScript
+map -b <A-s> :set nss!=<A-Tab>
+map -b <C-A-s> :set nst!=<A-Tab>
+map -b <C-S-s> :set nsu!=<A-Tab>
+
+"VimFx
+map <C-S-k> <pass>
+map <C-S-j> <pass>
+
+com -nargs=1 -complete help th tab :help <args>
+
+"Find
+set hlfind
+set findflags=''
+map -b ,, :noh<CR>
+
+set scroll=0
+set scrollsteps=1
+set guioptions+=T
+
+"set editor='gvim --role pentagvim -f +<line> +"sil! call cursor(0, <column>)" <file>'
+
+"Enable Tree Style Tabs
+style -name tabbrowser-height-fix chrome://* <<EOM
+[dactyl-australis=true] .tabbrowser-tabs {
+    max-height:       unset !important;
+}
+EOM

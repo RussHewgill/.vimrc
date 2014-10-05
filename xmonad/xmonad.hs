@@ -47,6 +47,7 @@ main = do
     spawn $ "~/bin/wp"
     spawn "unclutter -grab"
     spawn "wmname LG3D"
+    spawn "yakuake"
 
     ldzenproc <- spawnPipe $ mydzenl
     spawn $ mydzenclockl
@@ -281,8 +282,8 @@ scratchpads = [
 
 scratchpadBinds = [
           {-("M-x" , namedScratchpadAction scratchpads "floatterm" >> namedScratchpadAction scratchpads "floatterm2">> windowGo L False)-}
-          ("M-x" , namedScratchpadAction scratchpads "floatterm")
-        , ("M-c" , namedScratchpadAction scratchpads "cmus")
+          {-("M-x" , namedScratchpadAction scratchpads "floatterm")-}
+         ("M-c" , namedScratchpadAction scratchpads "cmus")
         , ("M-z" , namedScratchpadAction scratchpads "notepad")
         --, ("M-e" , namedScratchpadAction scratchpads "ranger")
         ]

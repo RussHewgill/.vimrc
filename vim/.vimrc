@@ -14,31 +14,37 @@ call vundle#begin()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
 Plugin 'scrooloose/nerdcommenter' 
-" Plugin 'https://github.com/tpope/vim-commentary'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-surround'
 Plugin 'tmhedberg/SimpylFold'
 Plugin 'godlygeek/tabular'
 Plugin 'Lokaltog/vim-easymotion'
-"Plugin 'Shougo/neocomplcache.vim'
 Plugin 'eagletmt/neco-ghc'
-Plugin 'https://github.com/raichoo/haskell-vim'
-Plugin 'https://github.com/kien/ctrlp.vim'
-Plugin 'https://github.com/SirVer/ultisnips'
-Plugin 'https://github.com/honza/vim-snippets'
-"Plugin 'davidhalter/jedi-vim'
-Plugin 'https://github.com/Valloric/YouCompleteMe'
-"Plugin 'ervandew/supertab'
-"Plugin 'https://github.com/nathanaelkane/vim-indent-guides'
-Plugin 'https://github.com/bruno-/vim-husk'
+Plugin 'raichoo/haskell-vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'bruno-/vim-husk'
+Plugin 'kana/vim-textobj-user'
+Plugin 'nelstrom/vim-textobj-rubyblock'
+Plugin 'bps/vim-textobj-python'
+Plugin 'Raimondi/delimitMate'
+Plugin 'fs111/pydoc.vim'
 
-"Plugin 'sjl/badwolf'
+"Plugin 'kchmck/vim-coffee-script'
+"Plugin 'davidhalter/jedi-vim'
+"Plugin 'Shougo/neocomplcache.vim'
+"Plugin 'tpope/vim-commentary'
+"Plugin 'ervandew/supertab'
+"Plugin 'nathanaelkane/vim-indent-guides'
+
 Plugin 'russhewgill/badwolf'
 Plugin 'bling/vim-airline'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'tomasr/molokai'
 Plugin 'tpope/vim-vividchalk'
-Plugin 'https://github.com/nanotech/jellybeans.vim'
+Plugin 'nanotech/jellybeans.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -191,15 +197,17 @@ inoremap jl <Esc>la
 
 nnoremap <leader>tr :w<CR>:so %<cr>
 
+nnoremap <leader>u :w<cr>:!%:p<cr><cr>
+vnoremap <leader>u :w<cr>:!%:p<cr><cr>
+
+nnoremap ,. @:
+vnoremap ,. @:
+
 "Hardcore mode
 nnoremap <up> <nop>
 nnoremap <down> <nop>
 nnoremap <left> <nop>
 nnoremap <right> <nop>
-inoremap <up> =>
-inoremap <down> <nop>
-inoremap <left> <-
-inoremap <right> ->
 
 nnoremap <Leader>tn :tabnew<cr>
 nnoremap <Leader>to :tabonly<cr>
@@ -209,12 +217,14 @@ nnoremap <Leader>tm :tabmove
 nnoremap <Leader>k :tabn<CR>
 nnoremap <Leader>j :tabp<CR>
 
+nnoremap <leader><leader>h :Pydoc<space>
+vnoremap <leader><leader>h :Pydoc<space>
+
 nnoremap <Leader>tv :tabe ~/.vimrc<CR>
 nnoremap <Leader>tx :tabe ~/.xmonad/xmonad.hs<CR>
 nnoremap <Leader>tz :tabe ~/.zshrc<CR>
 nnoremap <Leader>ta :tabe ~/.config/.aliases<CR>
-
-nnoremap <Leader>f :w<CR>
+nnoremap <Leader>ti :tabe /usr/lib/python3.4/site-packages/prompt_toolkit/key_bindings/vi.py<CR>
 
 nmap <Leader>y "*y
 vmap <Leader>y "*y
@@ -237,6 +247,8 @@ nnoremap ; :
 vnoremap ; :
 noremap <C-f> ;
 noremap <C-c> ,
+nnoremap \ ;
+vnoremap \ ;
 
 nnoremap o o<esc>
 nnoremap O O<esc>
@@ -270,18 +282,18 @@ nnoremap Q @@
 vnoremap Q @@
 
 " Move a line with alt+[jk], indent with alt +[hl]
-nnoremap <A-j> :m+<CR>==
-nnoremap <A-k> :m-2<CR>==
-nnoremap <A-h> <<
-nnoremap <A-l> >>
-inoremap <A-j> <Esc>:m+<CR>==gi
-inoremap <A-k> <Esc>:m-2<CR>==gi
-inoremap <A-h> <Esc><<`]a
-inoremap <A-l> <Esc>>>`]a
-vnoremap <A-j> :m'>+<CR>gv=gv
-vnoremap <A-k> :m-2<CR>gv=gv
-vnoremap <A-h> <gv
-vnoremap <A-l> >gv
+"nnoremap <A-j> :m+<CR>==
+"nnoremap <A-k> :m-2<CR>==
+"nnoremap <A-h> <<
+"nnoremap <A-l> >>
+"inoremap <A-j> <Esc>:m+<CR>==gi
+"inoremap <A-k> <Esc>:m-2<CR>==gi
+"inoremap <A-h> <Esc><<`]a
+"inoremap <A-l> <Esc>>>`]a
+"vnoremap <A-j> :m'>+<CR>gv=gv
+"vnoremap <A-k> :m-2<CR>gv=gv
+"vnoremap <A-h> <gv
+"vnoremap <A-l> >gv
 
 " Folding
 " {{{
@@ -296,6 +308,13 @@ nnoremap ZX zO
 
 "Plugin Settings
 "{{{
+
+" Ruby Block
+" {{{
+
+runtime macros/matchit.vim
+
+" }}}
 
 " CtrlP
 " {{{
@@ -318,16 +337,16 @@ let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 " YouCompleteMe
 " {{{
 
-"let g:ycm_path_to_python_interpreter                    = '/usr/bin/python'
+let g:ycm_path_to_python_interpreter                    = '/usr/bin/python2'
 let g:ycm_register_as_syntastic_checker                 = 0
 let g:ycm_collect_identifiers_from_tags_files           = 1
 let g:ycm_seed_identifiers_with_syntax                  = 1
 let g:ycm_key_detailed_diagnostics                      = ''
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_add_preview_to_completeopt                    = 0
 let g:ycm_semantic_triggers                             = { 'haskell' : ['.'],  
                             \ 'bash' : ['#!'], 'python' : [] }
 
-"autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 
 nnoremap <leader>h :YcmCompleter GoTo<CR>
 
@@ -344,13 +363,16 @@ let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/Ultisnips"
 " Syntastic
 "{{{
 
+let g:syntastic_c_checkers = [ 'gcc' ]
+let g:syntastic_python_checkers = ['python', 'pep8']
+let g:syntastic_javascript_checkers = [ 'jshint' ]
+let g:syntastic_coffee_checkers = [ 'coffeelint' ]
+
+let g:syntastic_coffee_coffeelint_args = "--csv --file /usr/lib/node_modules/coffeelint/coffeelint.json"
 let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"
 "let g:syntastic_asm_dialect = 'nasm'
 
-let g:syntastic_c_checkers = [ 'gcc' ]
-"let g:syntastic_c_gcc_
-
-let g:syntastic_python_checkers = ['python', 'pylint']
+let g:syntastic_python_pylint_rcfile='/home/russ/.pylintrc'
 let g:syntastic_python_python_exec = '/usr/bin/python'
 
 let g:syntastic_mode_map = { 'mode': 'active',
@@ -358,7 +380,6 @@ let g:syntastic_mode_map = { 'mode': 'active',
                         \ 'passive_filetypes': [] }
 
 
-let g:syntastic_python_pylint_rcfile='/home/russ/.pylintrc'
 
 let g:syntastic_auto_loc_list=0
 nnoremap <silent> <leader>b :SyntasticCheck mypy<CR>:Errors<CR>
@@ -402,16 +423,14 @@ hi EasyMotionShade guifg=#998f84
 "let g:SuperTabNoCompleteAfter = ['^', '\s', 'do']
 "let g:SuperTabLongestEnhanced = 1
 
-"set completeopt=menuone,longest,preview
-set completeopt=longest
+set completeopt=longest,menu
 
 " }}}
 
 " NERDCommenter
 " {{{
 
-map <leader>cc <plug>NERDCommenterToggle
-map <leader>ci <plug>NERDCommenterComment
+map <leader>cc <plug>NERDCommenterAlignBoth
 
 " }}}
 
@@ -481,6 +500,7 @@ augroup end
 
 au BufRead,BufNewFile *.py2 set filetype=python
 au BufRead,BufNewFile *.py2 let g:syntastic_python_python_exec = '/usr/bin/python2'
+au BufRead,BufNewFile *.py2 let g:syntastic_python_checkers = ['python', 'pyflakes']
 
 " change this if i ever need to use perl
 " Welp, perl

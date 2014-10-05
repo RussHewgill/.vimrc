@@ -152,7 +152,7 @@ export SAVEHIST=10000000
 export EDITOR='vim'
 export JAVA_HOME=/opt/java/
 export LANG=en_US.UTF-8
-export PATH=$HOME/bin:/usr/local/bin:$PATH:/home/russ/.cabal/bin
+export PATH=$HOME/bin:/usr/local/bin:$PATH:/home/russ/.cabal/bin:/home/russ/.gem/ruby/2.1.0/bin
 export JAVA_HOME=
 
 # }}}
