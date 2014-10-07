@@ -12,11 +12,11 @@ fi
 if [[ $distro == Ubuntu ]]; then
   install='aptitude install -y'
   aptitude update && aptitude upgrade -y
-if [[ $distro == RedHat ]]; then
+elif [[ $distro == RedHat ]]; then
   install='yum install -y'
   yum update
-if [[ $distro == Arch ]]; then
-  install='pacman -Sy'
+elif [[ $distro == Arch ]]; then
+  install='pacman --noconfirm -Sy'
   pacman -Syu --noconfirm
 else
   echo wat
