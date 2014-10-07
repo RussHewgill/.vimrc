@@ -1,5 +1,3 @@
-
-
 "Vundle
 "{{{
 set nocompatible              " be iMproved, required
@@ -16,7 +14,7 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'scrooloose/nerdcommenter' 
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-surround'
-Plugin 'tmhedberg/SimpylFold'
+"Plugin 'tmhedberg/SimpylFold'
 Plugin 'godlygeek/tabular'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'eagletmt/neco-ghc'
@@ -28,9 +26,8 @@ Plugin 'Valloric/YouCompleteMe'
 Plugin 'bruno-/vim-husk'
 Plugin 'kana/vim-textobj-user'
 Plugin 'nelstrom/vim-textobj-rubyblock'
-Plugin 'bps/vim-textobj-python'
-Plugin 'Raimondi/delimitMate'
 Plugin 'fs111/pydoc.vim'
+Plugin 'Raimondi/delimitMate'
 
 "Plugin 'kchmck/vim-coffee-script'
 "Plugin 'davidhalter/jedi-vim'
@@ -77,7 +74,7 @@ set backspace=indent,eol,start
 set autoindent
 set ruler
 set mouse=a
-set history=5000
+set history=10000
 
 filetype plugin on
 filetype indent on
@@ -132,8 +129,8 @@ set incsearch
 set showmatch
 set hlsearch
 
-nmap <silent> ,, :let @/=""<cr>
-vmap <silent> ,, :let @/=""<cr>
+nnoremap <silent> ,, :let @/=""<cr>
+vnoremap <silent> ,, :let @/=""<cr>
 
 nnoremap <tab> %
 vnoremap <tab> %
@@ -192,16 +189,14 @@ map H ^
 map L $
 
 inoremap jk <Esc>
+inoremap JK <Esc>
 inoremap jj <Esc>i
 inoremap jl <Esc>la
 
-nnoremap <leader>tr :w<CR>:so %<cr>
+noremap <leader>tr :w<CR>:so %<cr>
+noremap <leader>u :w<cr>:!%:p<cr><cr>
 
-nnoremap <leader>u :w<cr>:!%:p<cr><cr>
-vnoremap <leader>u :w<cr>:!%:p<cr><cr>
-
-nnoremap ,. @:
-vnoremap ,. @:
+noremap ,. @:
 
 "Hardcore mode
 nnoremap <up> <nop>
@@ -217,8 +212,7 @@ nnoremap <Leader>tm :tabmove
 nnoremap <Leader>k :tabn<CR>
 nnoremap <Leader>j :tabp<CR>
 
-nnoremap <leader><leader>h :Pydoc<space>
-vnoremap <leader><leader>h :Pydoc<space>
+noremap <leader><leader>h :Pydoc<space>
 
 nnoremap <Leader>tv :tabe ~/.vimrc<CR>
 nnoremap <Leader>tx :tabe ~/.xmonad/xmonad.hs<CR>
@@ -226,29 +220,21 @@ nnoremap <Leader>tz :tabe ~/.zshrc<CR>
 nnoremap <Leader>ta :tabe ~/.config/.aliases<CR>
 nnoremap <Leader>ti :tabe /usr/lib/python3.4/site-packages/prompt_toolkit/key_bindings/vi.py<CR>
 
-nmap <Leader>y "*y
-vmap <Leader>y "*y
-nmap <Leader>d "*d
-vmap <Leader>d "*d
-nmap <Leader>p "*p
-vmap <Leader>p "*p
+map <Leader>y "*y
+map <Leader>d "*d
+map <Leader>p "*p
 
-nmap <Leader><Leader>y "+y
-vmap <Leader><Leader>y "+y
-nmap <Leader><Leader>d "+d
-vmap <Leader><Leader>d "+d
-nmap <Leader><Leader>p "+p
-vmap <Leader><Leader>p "+p
+map <Leader><Leader>y "+y
+map <Leader><Leader>d "+d
+map <Leader><Leader>p "+p
 
 "Tabularize
 nnoremap <Leader><Tab> :Tabularize /
 
-nnoremap ; :
-vnoremap ; :
+noremap ; :
 noremap <C-f> ;
 noremap <C-c> ,
-nnoremap \ ;
-vnoremap \ ;
+noremap \ ;
 
 nnoremap o o<esc>
 nnoremap O O<esc>
@@ -258,8 +244,8 @@ noremap <M-O> O
 
 "Split Commands
 
-nnoremap <Leader>w <C-w>v<C-w>l
-nnoremap <Leader>e <C-w>n
+nnoremap <Leader>ww <C-w>v<C-w>l
+nnoremap <Leader>we <C-w>n
 nnoremap <Leader>- <C-w>-
 nnoremap <Leader>= <C-w>=
 nnoremap <Leader>+ <C-w>+
@@ -272,37 +258,13 @@ nnoremap <C-l> <C-w>l
 noremap <C-y> 5<C-y>
 noremap <C-e> 5<C-e>
 
-"noremap <C-u> 14<C-y>
-"noremap <C-d> 14<C-e>
+noremap <leader>c gc
 
-nnoremap <leader>c gc
-vnoremap <leader>c gc
-
-nnoremap Q @@
-vnoremap Q @@
-
-" Move a line with alt+[jk], indent with alt +[hl]
-"nnoremap <A-j> :m+<CR>==
-"nnoremap <A-k> :m-2<CR>==
-"nnoremap <A-h> <<
-"nnoremap <A-l> >>
-"inoremap <A-j> <Esc>:m+<CR>==gi
-"inoremap <A-k> <Esc>:m-2<CR>==gi
-"inoremap <A-h> <Esc><<`]a
-"inoremap <A-l> <Esc>>>`]a
-"vnoremap <A-j> :m'>+<CR>gv=gv
-"vnoremap <A-k> :m-2<CR>gv=gv
-"vnoremap <A-h> <gv
-"vnoremap <A-l> >gv
+noremap Q @@
 
 " Folding
-" {{{
 
-nnoremap zx zo
-nnoremap zX zO
-nnoremap ZX zO
 
-" }}}
 
 "}}}
 
@@ -382,10 +344,19 @@ let g:syntastic_mode_map = { 'mode': 'active',
 
 
 let g:syntastic_auto_loc_list=0
-nnoremap <silent> <leader>b :SyntasticCheck mypy<CR>:Errors<CR>
-nnoremap <silent> <leader>v :lclose<CR>
-vnoremap <silent> <leader>b :SyntasticCheck mypy<CR>:Errors<CR>
-vnoremap <silent> <leader>v :lclose<CR>
+"noremap <silent> <leader>b :SyntasticCheck mypy<CR>:Errors<CR>
+"noremap <silent> <leader>v :lclose<CR>
+
+noremap <leader>e :call ToggleErrors()<cr>
+
+function! ToggleErrors()
+    let old_last_winnr = winnr('$')
+    lclose
+    if old_last_winnr == winnr('$')
+        " Nothing was closed, open syntastic error location panel
+        Errors
+    endif
+endfunction
 
 "}}}
 
@@ -497,7 +468,6 @@ augroup end
 
 "python
 
-
 au BufRead,BufNewFile *.py2 set filetype=python
 au BufRead,BufNewFile *.py2 let g:syntastic_python_python_exec = '/usr/bin/python2'
 au BufRead,BufNewFile *.py2 let g:syntastic_python_checkers = ['python', 'pyflakes']
@@ -507,4 +477,3 @@ au BufRead,BufNewFile *.py2 let g:syntastic_python_checkers = ['python', 'pyflak
 "au BufNewFile,BufRead *.pl set filetype=prolog
 
 " }}}
-

@@ -10,55 +10,55 @@
 }}}-}
 
 -- Imports {{{
+
 import XMonad
 import XMonad.Actions.CycleWS
+import XMonad.Actions.FloatKeys
 import XMonad.Actions.Navigation2D
 import XMonad.Actions.PhysicalScreens
 import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
 import XMonad.Hooks.Place
+import XMonad.Layout.Grid
+import XMonad.Layout.IndependentScreens
 import XMonad.Layout.NoBorders
 import XMonad.Layout.PerWorkspace
+import XMonad.Layout.Reflect
 import XMonad.Util.EZConfig
-import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.NamedScratchpad
+import XMonad.Util.Run(spawnPipe)
+import XMonad.Util.WindowProperties
 import XMonad.Util.WorkspaceCompare
 import qualified XMonad.StackSet as W
-import XMonad.Util.WindowProperties
-import XMonad.Layout.IndependentScreens
-import XMonad.Layout.Reflect
-import XMonad.Hooks.EwmhDesktops
-import XMonad.Layout.Grid
-import XMonad.Prompt
-import XMonad.Prompt.Input
 
 import System.IO
 import System.Exit
 import Data.List
 import Data.Ratio
 import Control.Applicative
+import Control.Monad
 import Data.Maybe
 
 -- }}}
 
 -- Main {{{
 main = do
-    spawn $ "~/bin/wp"
+    spawn "~/bin/wp"
     spawn "unclutter -grab"
     spawn "wmname LG3D"
-    spawn "yakuake"
 
-    ldzenproc <- spawnPipe $ mydzenl
-    spawn $ mydzenclockl
+    ldzenproc <- spawnPipe mydzenl
+    spawn mydzenclockl
     
     -- only spawn second set of dzen bars when 2+ monitors are connected
     numscreens <- countScreens
-    if numscreens == 1
-        then do xmonad $ runbars laptopconf ldzenproc Nothing
+    if numscreens == (1 :: Integer)
+        then xmonad $ runbars laptopconf ldzenproc Nothing
         else do
-        rdzenproc <- spawnPipe $ mydzenr
-        spawn $ mydzenclockr
+        rdzenproc <- spawnPipe mydzenr
+        spawn mydzenclockr
         xmonad $ ewmh $ runbars dualheadconf ldzenproc (Just rdzenproc)
 
 -- }}}
@@ -89,11 +89,11 @@ laptopconf = conf `additionalKeysP` mykeysonehead `removeKeysP` notKeysP
 
 --Runs 2 statusbars for 2+ monitors, 1 otherwise
 runbars :: XConfig l -> Handle -> Maybe Handle -> XConfig l
-runbars x left Nothing = x { logHook = myPPlog left 1 }
-runbars x left (Just right) = x { logHook= myPPlog left 0 >> myPPlog right 1 }
+runbars x left Nothing = x { logHook = myPPlog left (1 :: Integer) }
+runbars x left (Just right) = x { logHook= myPPlog left (0 :: Integer) >> myPPlog right (1 :: Integer) }
 
 -- produce a log for a handle and screen
-myPPlog handle screen = (dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ dzenPP
+myPPlog handle _ = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ dzenPP
                 { ppOutput          = hPutStrLn handle
                 , ppCurrent         = dzenColor fg cwsbg . clickable . pad . deTagWS
                 , ppTitle           = dzenColor fg bg . wrap "^ca(3, xdotool key super+m)\
@@ -104,24 +104,25 @@ myPPlog handle screen = (dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP 
                 , ppSep             = ""
                 , ppWsSep           = "^fg(" ++ wssepbg ++ ")^r(2x30)"
                 , ppUrgent          = dzenColor fg "red"
-                , ppLayout          = (wrap ("^fg(" ++ wssepbg ++ ")^r(2x30)^fg() ") (" ^fg(" ++ wssepbg ++ ")^r(2x30)")) . layoutifier
-                })
+                , ppLayout          = wrap ("^fg(" ++ wssepbg ++ ")^r(2x30)^fg() ") (" ^fg(" ++ wssepbg ++ ")^r(2x30)") . layoutifier
+                }
         where
             -- add dzen clickable tags to each workspace
             clickable s = wrap ("^ca(1, xdotool key super+" 
-                            ++ (filter (\x->elem x ['1'..'9']) $ deTagWS s) 
+                            ++ filter (\x->x `elem` ['1'..'9']) (deTagWS s) 
                             ++ ")") "^ca()" s
             --hide unnamed workspaces until they have windows
             showNamedWs ws = if any (`elem` ws) ['a'..'z']
                                 then pad ws else ""
             -- remove per moniter tags from workspace
-            deTagWS ws  = if elem '_' ws then fst $ break (=='_') ws else ws
+            deTagWS ws  = if '_' `elem` ws then takeWhile (not . (=='_')) ws else ws
             layoutifier x = case x of
-                                 "Grid"          -> "NG"
-                                 "ReflectX Grid" -> "RG"
-                                 "Tall"          -> "NT"
-                                 "Mirror Tall"   -> "MT"
-                                 "ReflectX Tall" -> "RT"
+                                "Grid"          -> "NG"
+                                "ReflectX Grid" -> "RG"
+                                "Tall"          -> "NT"
+                                "Mirror Tall"   -> "MT"
+                                "ReflectX Tall" -> "RT"
+                                _ -> "WAT"
 
 -- }}}
 
@@ -180,22 +181,12 @@ mymanagehook = composeAll . concat $
         rect = customFloating $ W.RationalRect 0 0.3 0.3 0.3
 
 
-{-qnot :: Query Bool -> Query Bool-}
-{-qnot prop = do -}
-    {-r <- prop-}
-    {-return $ not $ r-}
-
-test prog cmd = allWithProperty (ClassName prog) >>=
-                \x -> if (null x)
-                    then spawn cmd
-                    else return ()
-
 -- pure function for use with doF
 -- causes new windows to be inserted below master
 avoidMaster :: W.StackSet i l a s sd -> W.StackSet i l a s sd
 avoidMaster = W.modify' $ \c -> case c of
     W.Stack t [] (r:rs) ->  W.Stack t [r] rs
-    otherwise           -> c
+    _ -> c
 
 -- }}}
 
@@ -266,14 +257,12 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-160-*-*-*-*-*-*' "
 
 scratchpads = [
     NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
-  {-, NS "floatterm2" (roxterm ++ "floatterm2") ( title =? "floatterm2") rect2-}
   , NS "cmus" (xterm ++ "cmus -e ~/bin/cmus.sh") ( title =? "cmus") tunes
   --, NS "ranger" (xterm ++ "ranger -e ranger") ( title =? "ranger") tunes
   , NS "notepad" ("exec gvim --servername notepad -f --role notepad ~/Documents/notepad") ( role =? "notepad") rect
+  {-, NS "yakuake" ("yakuake") ( title =? "Yakuake") yakuake-}
   ]
   where
-    {-rect1 = customFloating $ W.RationalRect 0 0 0.5 0.4-}
-    {-rect2 = customFloating $ W.RationalRect 0.5 0 0.5 0.4-}
     tunes = customFloating $ W.RationalRect 0 0 1 0.5
     rect = customFloating $ W.RationalRect 0 0 1 0.4
     roxterm = "roxterm --separate --profile=scratchpad -T "
@@ -281,11 +270,12 @@ scratchpads = [
     role = stringProperty "WM_WINDOW_ROLE"
 
 scratchpadBinds = [
-          {-("M-x" , namedScratchpadAction scratchpads "floatterm" >> namedScratchpadAction scratchpads "floatterm2">> windowGo L False)-}
-          {-("M-x" , namedScratchpadAction scratchpads "floatterm")-}
          ("M-c" , namedScratchpadAction scratchpads "cmus")
         , ("M-z" , namedScratchpadAction scratchpads "notepad")
+        , ("`" , namedScratchpadAction scratchpads "floatterm")
         --, ("M-e" , namedScratchpadAction scratchpads "ranger")
+        , ("M-[", withFocused (keysResizeWindow (0,60) (1,0)))
+        , ("M-]", withFocused (keysResizeWindow (0,-60) (1,0)))
         ]
 
 -- }}}
@@ -306,23 +296,21 @@ goOrToggle w = do
     cur <- gets (W.currentTag . windowset)
     if cur == w
         then toggleWS' [scratchpadws]
-        else (windows . W.view $ w)
+        else windows . W.view $ w
 
 toggleOrViewNoSP = toggleOrDoSkip [scratchpadws] W.greedyView
 
 -- spawn a program if it's window isn't running
-singlespawn prog cmd = allWithProperty (ClassName prog) >>=
-                \x -> if (null x)
-                    then spawn cmd
-                    else return ()
+singlespawn prog command = allWithProperty (ClassName prog) >>=
+                \x -> when (null x) $ spawn command
 
--- if current WS is empty, spawn cmd, otherwise goto next empty
+-- if current WS is empty, spawn command, otherwise goto next empty
 nextEmpty :: String -> X ()
-nextEmpty cmd = do
+nextEmpty command = do
     curws <- gets (W.peek . windowset)
     if isNothing curws
-        then spawn cmd
-        else moveTo Next EmptyWS >> spawn cmd
+        then spawn command
+        else moveTo Next EmptyWS >> spawn command
 
 -- there's probably a builtin for this
 repeatX :: X () -> Int -> X ()
@@ -417,7 +405,8 @@ mykeysP =
         {-, ("M-d" , (inputPrompt defaultXPConfig "wat" ?+ spawn) )-}
         , ("M-t" , spawn "roxterm --profile=Default")
             --TODO: stop from launching more windows
-        , ("M-g" , singlespawn "Firefox" "firefox")
+        {-, ("M-g" , singlespawn "Firefox" "firefox")-}
+        , ("M-g" , spawn "firefox-beta-bin" )
         , ("M-e" , spawn "xterm -e ranger" )
         , ("M-s" , spawn gvimcmd )
 
@@ -445,8 +434,7 @@ mykeysP =
 
             -- lockscreen just picks a random wallpaper from a dual monitor
             -- folder and starts i3lock
-        , ("M-<Pause>" , spawn "systemctl suspend")
-        , ("M-<End>"   , spawn "~/.lockscreen.sh")
+        , ("M-<Pause>" , spawn "~/.lockscreen.sh && systemctl suspend")
         , ("M-<Delete>"   , spawn "~/.lockscreen.sh")
         , ("M-S-q" , spawn $ "pkill dzen2; sleep 1; " ++ myrestart )
         , ("M-S-<Delete>" , io (exitWith  ExitSuccess))

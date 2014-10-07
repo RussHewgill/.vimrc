@@ -165,6 +165,10 @@ set -U BROWSER 'firefox-nightly'
 
 source ~/.config/.aliases
 
+function sd () {
+    
+}
+
 function b64 () {
     echo "$@" | base64 -d
 }
