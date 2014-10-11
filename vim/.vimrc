@@ -18,7 +18,7 @@ Plugin 'tpope/vim-surround'
 Plugin 'godlygeek/tabular'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'eagletmt/neco-ghc'
-Plugin 'raichoo/haskell-vim'
+"Plugin 'raichoo/haskell-vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
@@ -28,6 +28,8 @@ Plugin 'kana/vim-textobj-user'
 Plugin 'nelstrom/vim-textobj-rubyblock'
 Plugin 'fs111/pydoc.vim'
 Plugin 'Raimondi/delimitMate'
+Plugin 'https://github.com/tpope/vim-repeat'
+Plugin 'sjl/gundo.vim'
 
 "Plugin 'kchmck/vim-coffee-script'
 "Plugin 'davidhalter/jedi-vim'
@@ -144,15 +146,18 @@ syntax on
 let g:hs_highlight_types=1
 let g:hs_highlight_boolean=1
 
-set background=dark
+"set background=dark
+set background=light
 "colorscheme jellybeans
 "colorscheme base16-default
 
 if has("gui_running")
-    let g:badwolf_darkgutter = 1
-    colorscheme badwolf
-
     set t_Co=256
+    "let g:badwolf_darkgutter = 1
+    colorscheme badwolf
+    "let g:solarized_termcolors=256
+    "colorscheme solarized
+
     set guifont=Inconsolata\ Medium\ 12
     set guioptions-=T
     set guioptions-=e
@@ -166,6 +171,8 @@ if has("gui_running")
 else
     set t_Co=256
     let g:badwolf_darkgutter = 1
+    "let g:solarized_termcolors=256
+    "colorscheme solarized
     colorscheme badwolf
 endif
 
@@ -197,6 +204,9 @@ noremap <leader>tr :w<CR>:so %<cr>
 noremap <leader>u :w<cr>:!%:p<cr><cr>
 
 noremap ,. @:
+
+noremap n nzz
+noremap N Nzz
 
 "Hardcore mode
 nnoremap <up> <nop>
@@ -271,6 +281,16 @@ noremap Q @@
 "Plugin Settings
 "{{{
 
+" Gundo
+"{{{
+
+map <F5> :GundoToggle<CR>
+let g:gundo_preview_bottom = 1
+let g:gundo_width = 35
+let g:gundo_close_on_revert = 1
+
+"}}}
+
 " Ruby Block
 " {{{
 
@@ -329,6 +349,7 @@ let g:syntastic_c_checkers = [ 'gcc' ]
 let g:syntastic_python_checkers = ['python', 'pep8']
 let g:syntastic_javascript_checkers = [ 'jshint' ]
 let g:syntastic_coffee_checkers = [ 'coffeelint' ]
+let g:syntastic_haskell_checkers = [ 'hdevtools', 'hlint' ]
 
 let g:syntastic_coffee_coffeelint_args = "--csv --file /usr/lib/node_modules/coffeelint/coffeelint.json"
 let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"

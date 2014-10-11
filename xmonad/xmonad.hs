@@ -151,9 +151,9 @@ emptywsfg = "#888888"
 -- Managehook {{{
 
 mymanagehook = composeAll . concat $
-    [ [className =? "Firefox"  <&&> resource =? "Navigator" --> doShift (wss!!0) ]
+    [ [className =? "Firefox"  <&&> resource =? "Navigator" --> doShift (head wss) ]
     , [className =? "Firefox"       --> doF W.swapMaster ]
-    , [role =? "pentagvim"            --> (doShift (wss!!0)) <+> rect ]
+    , [role =? "pentagvim"            --> doShift (head wss) <+> rect ]
     , [className =? "Firefox" <&&> resource /=? "Navigator" --> doFloat]
     , [className =? "Clementine"    --> doShift (wss!!2) ]
     --TODO: only move if no other gvim is running
@@ -165,7 +165,7 @@ mymanagehook = composeAll . concat $
     , [className =? "Gsimplecal"    --> placeHook (withGaps (0,0,30,0) $ underMouse (0,0)) ]
     , [isFullscreen                 --> doFullFloat      ]
     , [isFullscreen                 --> (doF W.focusDown <+> doFullFloat)]
-    , [(fmap (not . (isInfixOf c)) title) --> doF avoidMaster | c <- hiPriority ]
+    , [fmap (not . isInfixOf c) title --> doF avoidMaster | c <- hiPriority ]
     , [isDialog                     --> (doFloat <+> doF W.focusUp) ]
     {-, [(fmap (isInfixOf c) title <&&> (qnot isDialog)) --> doF avoidMaster | c <- hiPriority ]-}
     , [className =? "Gimp"          --> doShift (wss!!4) ] 
@@ -195,8 +195,8 @@ avoidMaster = W.modify' $ \c -> case c of
 mylayoutHook =  smartBorders
                 $ avoidStruts
                 $ onWorkspace (wss!!1) vimlayout 
-                $ onWorkspace (wss!!0) firefoxlayout 
-                $ mainlayout
+                $ onWorkspace (head wss) firefoxlayout 
+                  mainlayout
 
 mainlayout = Mirror tiled ||| reflectHoriz columns ||| columns
     where
@@ -207,14 +207,14 @@ mainlayout = Mirror tiled ||| reflectHoriz columns ||| columns
 
 firefoxlayout = reflectHoriz ff ||| Full
     where
-        ff = Tall  { tallNMaster = 1, tallRatio=(4%5), tallRatioIncrement=(3%100) }
+        ff = Tall  { tallNMaster = 1, tallRatio=4%5, tallRatioIncrement=3%100 }
 
-vimlayout = Mirror Tall { tallNMaster = 1, tallRatio=(3%5), tallRatioIncrement=(3%100) } 
+vimlayout = Mirror Tall { tallNMaster = 1, tallRatio=3%5, tallRatioIncrement=3%100 } 
                 ||| Grid
                 ||| reflectHoriz Grid
-                ||| Tall { tallNMaster = 1, tallRatio=(1%2), tallRatioIncrement=(3%100) }
+                ||| Tall { tallNMaster = 1, tallRatio=1%2, tallRatioIncrement=3%100 }
 
-columns = Tall { tallNMaster = 1, tallRatio=(1%2), tallRatioIncrement=(3%100) }
+columns = Tall { tallNMaster = 1, tallRatio=1%2, tallRatioIncrement=3%100 }
 
 -- }}}
 
@@ -258,9 +258,7 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-160-*-*-*-*-*-*' "
 scratchpads = [
     NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
   , NS "cmus" (xterm ++ "cmus -e ~/bin/cmus.sh") ( title =? "cmus") tunes
-  --, NS "ranger" (xterm ++ "ranger -e ranger") ( title =? "ranger") tunes
-  , NS "notepad" ("exec gvim --servername notepad -f --role notepad ~/Documents/notepad") ( role =? "notepad") rect
-  {-, NS "yakuake" ("yakuake") ( title =? "Yakuake") yakuake-}
+  , NS "notepad" "exec gvim --servername notepad -f --role notepad ~/Documents/notepad" ( role =? "notepad") rect
   ]
   where
     tunes = customFloating $ W.RationalRect 0 0 1 0.5
@@ -273,7 +271,6 @@ scratchpadBinds = [
          ("M-c" , namedScratchpadAction scratchpads "cmus")
         , ("M-z" , namedScratchpadAction scratchpads "notepad")
         , ("`" , namedScratchpadAction scratchpads "floatterm")
-        --, ("M-e" , namedScratchpadAction scratchpads "ranger")
         , ("M-[", withFocused (keysResizeWindow (0,60) (1,0)))
         , ("M-]", withFocused (keysResizeWindow (0,-60) (1,0)))
         ]
@@ -315,7 +312,7 @@ nextEmpty command = do
 -- there's probably a builtin for this
 repeatX :: X () -> Int -> X ()
 repeatX f 0 = f
-repeatX f n = f >> (repeatX f (n-1))
+repeatX f n = f >> repeatX f (n-1)
 
 -- }}}
 
@@ -324,7 +321,7 @@ repeatX f n = f >> (repeatX f (n-1))
 -- keylist {{{
 
 --messy way to see if a key is available to use for something
-isbound x = if elem ("M-" ++ [x]) availablebinds then "Unbound" else "Bound"
+isbound x = if ("M-" ++ [x]) `elem` availablebinds then "Unbound" else "Bound"
 
 availablebinds = filter (`notElem` currentbinds) allbinds
 currentbinds  = nub (map fst mykeysdualhead) ++ defaultbinds
@@ -350,12 +347,12 @@ mykeysdualhead = mykeysP ++ [
         ]
         ++
         [ (otherModMasks ++ "M-" ++ key, action tag)
-            | (tag, key) <- zip mywssl $ map (drop 1 . snd.span (/='_')) mywssl
+            | (tag, key) <- zip mywssl $ map (drop 1 . dropWhile (/='_')) mywssl
             , (otherModMasks, action) <- [  ("", screenswitch 0)
                                             , ("S-", windows . W.shift ) ]]
         ++
         [ (otherModMasks ++ "M-" ++ key, action tag)
-            | (tag, key) <- zip mywssr $ map (drop 1 . snd.span (/='_')) mywssr
+            | (tag, key) <- zip mywssr $ map (drop 1 . dropWhile (/='_')) mywssr
             , (otherModMasks, action) <- [  ("", screenswitch 1)
                                             , ("S-", windows . W.shift ) ]]
         ++  -- Disable Greedy Switching
@@ -364,7 +361,7 @@ mykeysdualhead = mykeysP ++ [
             , (otherModMasks, action) <- [  ("", toggleOrViewNoSP )
                                             , ("S-", windows . W.shift ) ]]
         where
-            screenswitch s ws = ( viewScreen s ) >> (windows . W.view $ ws )
+            screenswitch s ws = viewScreen s >> (windows . W.view $ ws )
 
 -- }}}
 
@@ -437,7 +434,7 @@ mykeysP =
         , ("M-<Pause>" , spawn "~/.lockscreen.sh && systemctl suspend")
         , ("M-<Delete>"   , spawn "~/.lockscreen.sh")
         , ("M-S-q" , spawn $ "pkill dzen2; sleep 1; " ++ myrestart )
-        , ("M-S-<Delete>" , io (exitWith  ExitSuccess))
+        , ("M-S-<Delete>" , io exitSuccess)
         {-, ("<F8>" , spawn "~/bin/autoclick.sh" )-}
         ] ++
         scratchpadBinds
