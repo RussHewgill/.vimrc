@@ -402,8 +402,8 @@ mykeysP =
         {-, ("M-d" , (inputPrompt defaultXPConfig "wat" ?+ spawn) )-}
         , ("M-t" , spawn "roxterm --profile=Default")
             --TODO: stop from launching more windows
-        {-, ("M-g" , singlespawn "Firefox" "firefox")-}
-        , ("M-g" , spawn "firefox-beta-bin" )
+        , ("M-g" , singlespawn "Firefox" "firefox")
+        --, ("M-g" , spawn "firefox-beta-bin" )
         , ("M-e" , spawn "xterm -e ranger" )
         , ("M-s" , spawn gvimcmd )
 

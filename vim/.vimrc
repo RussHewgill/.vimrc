@@ -158,6 +158,8 @@ if has("gui_running")
     "let g:solarized_termcolors=256
     "colorscheme solarized
 
+    set guicursor+=a:blinkwait0
+
     set guifont=Inconsolata\ Medium\ 12
     set guioptions-=T
     set guioptions-=e
@@ -205,6 +207,21 @@ noremap <leader>u :w<cr>:!%:p<cr><cr>
 
 noremap ,. @:
 
+cnoremap <C-p> <up>
+cnoremap <C-n> <down>
+
+"TODO: make work
+"noremap y<space> i<space><right><space><esc>
+
+"noremap y<space> :call Spacesurround()<cr>
+nnoremap <Plug>Spacesurround :call Spacesurround()<cr>
+nmap ,<space> <Plug>Spacesurround
+
+function! Spacesurround()
+    :execute "normal! i\<space>\<right>\<space>\<esc>"
+    silent! call repeat#set("\<plug>Spacesurround", v:count)
+endfunction
+
 noremap n nzz
 noremap N Nzz
 
@@ -239,7 +256,8 @@ map <Leader><Leader>d "+d
 map <Leader><Leader>p "+p
 
 "Tabularize
-nnoremap <Leader><Tab> :Tabularize /
+nnoremap <Leader><Tab> :Tabularize /\s\zs=\s.*/<cr>
+nnoremap <Leader><Leader><Tab> :Tabularize /
 
 noremap ; :
 noremap <C-f> ;
@@ -268,7 +286,7 @@ nnoremap <C-l> <C-w>l
 noremap <C-y> 5<C-y>
 noremap <C-e> 5<C-e>
 
-noremap <leader>c gc
+"noremap <leader>c gc
 
 noremap Q @@
 
@@ -353,6 +371,9 @@ let g:syntastic_haskell_checkers = [ 'hdevtools', 'hlint' ]
 
 let g:syntastic_coffee_coffeelint_args = "--csv --file /usr/lib/node_modules/coffeelint/coffeelint.json"
 let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"
+let g:syntastic_haskell_hdevtools_args = '-g -Wall -g -fno-warn-unused-binds
+    \ -g -fno-warn-unused-imports -g -fno-warn-missing-signatures -g -fno-hs-main
+    \ -g -fno-warn-deprecations'
 "let g:syntastic_asm_dialect = 'nasm'
 
 let g:syntastic_python_pylint_rcfile='/home/russ/.pylintrc'
@@ -369,6 +390,7 @@ let g:syntastic_auto_loc_list=0
 "noremap <silent> <leader>v :lclose<CR>
 
 noremap <leader>e :call ToggleErrors()<cr>
+noremap <leader><leader>e :SyntasticToggleMode<cr>
 
 function! ToggleErrors()
     let old_last_winnr = winnr('$')
@@ -376,6 +398,16 @@ function! ToggleErrors()
     if old_last_winnr == winnr('$')
         " Nothing was closed, open syntastic error location panel
         Errors
+    endif
+endfunction
+
+noremap <leader>l :call Togglehlint()<cr>
+
+function! Togglehlint()
+    if g:syntastic_haskell_checkers == ['hdevtools', 'hlint']
+        silent execute "let g:syntastic_haskell_checkers = ['hdevtools']"
+    else
+        silent execute "let g:syntastic_haskell_checkers = ['hdevtools', 'hlint']"
     endif
 endfunction
 
@@ -419,13 +451,6 @@ set completeopt=longest,menu
 
 " }}}
 
-" NERDCommenter
-" {{{
-
-map <leader>cc <plug>NERDCommenterAlignBoth
-
-" }}}
-
 "Airline Setup
 "{{{
 
@@ -439,7 +464,7 @@ let g:airline#extensions#Syntastic#enabled = 0
 " Other tweaks
 "{{{
 
-"edit home
+"import System.Randomedit home
 cabbrev E <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'e ~/ <Backspace>' : 'E')<CR>
 
 "send result of cmd into buffer

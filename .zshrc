@@ -94,7 +94,8 @@ PROMPT='%{$fg[white]%}%n@%M%{$reset_color%} [%?] [%{$fg[green]%}%~%{$reset_color
 %{$fg[white]%}$%{$reset_color%} '
 #RPROMPT='%M'
 
-preexec () { print -Pn '\e]2;./%c%(!.#.$) $1\a' }
+#preexec () { print -Pn '\e]2;./%c%(!.#.$) $1\a' }
+preexec () { print -Pn '\e]2;$1\a' }
 
 # Keybinds {{{
 typeset -A key
@@ -165,8 +166,16 @@ set -U BROWSER 'firefox-nightly'
 
 source ~/.config/.aliases
 
-function sd () {
-    
+function saydone() {
+    sleep "$1"
+    say "$2"
+}
+
+function say () {
+    if (( $# == 0 ))
+        then espeak -a 200 "Completed" >& /dev/null
+        else espeak -a 200 "$@" >& /dev/null
+    fi
 }
 
 function b64 () {
@@ -182,7 +191,7 @@ function shellcode () {
 }
 
 function shh () {
-    ssh -t $1 'tmux has-session && tmux -2 attach || tmux -2'
+    ssh -t "$1" 'tmux has-session && tmux -2 attach || tmux -2'
 }
 
 function c () {
