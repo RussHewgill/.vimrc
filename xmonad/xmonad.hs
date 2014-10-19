@@ -1,45 +1,37 @@
 -- vim: set foldlevel=0 :
-{- Notes {{{
- -
- - Most of this was done while learning haskell
- - goal of config was more or less to behave like i3
- - used some other programs (dzen2, conky) for statusbar
- - music stuff for dzen just uses dbus to talk with clementine
- - {{{ }}} is for vim folding, makes config ~30 lines
- -
-}}}-}
-
 -- Imports {{{
 
 import XMonad
 import XMonad.Actions.CycleWS
-import XMonad.Actions.FloatKeys
-import XMonad.Actions.Navigation2D
-import XMonad.Actions.PhysicalScreens
 import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.ManageHelpers
-import XMonad.Hooks.Place
 import XMonad.Layout.Grid
-import XMonad.Layout.IndependentScreens
-import XMonad.Layout.NoBorders
-import XMonad.Layout.PerWorkspace
-import XMonad.Layout.Reflect
 import XMonad.Util.EZConfig
 import XMonad.Util.NamedScratchpad
-import XMonad.Util.Run(spawnPipe)
-import XMonad.Util.WindowProperties
-import XMonad.Util.WorkspaceCompare
 import qualified XMonad.StackSet as W
 
-import System.IO
-import System.Exit
-import Data.List
-import Data.Ratio
-import Control.Applicative
-import Control.Monad
-import Data.Maybe
+import XMonad.Actions.FloatKeys         (keysResizeWindow)
+import XMonad.Actions.Navigation2D      (withNavigation2DConfig,defaultNavigation2DConfig,windowGo,windowSwap)
+import XMonad.Actions.PhysicalScreens   (viewScreen)
+import XMonad.Hooks.EwmhDesktops        (ewmh,fullscreenEventHook)
+import XMonad.Hooks.Place               (placeHook, withGaps, underMouse)
+import XMonad.Layout.IndependentScreens (countScreens)
+import XMonad.Layout.NoBorders          (smartBorders)
+import XMonad.Layout.PerWorkspace       (onWorkspace)
+import XMonad.Layout.Reflect            (reflectHoriz, reflectVert)
+import XMonad.Util.Run                  (spawnPipe)
+import XMonad.Util.WindowProperties     (allWithProperty,Property (ClassName))
+import XMonad.Util.WorkspaceCompare     (getSortByIndex)
+import XMonad.Util.Paste                (sendKey,noModMask)
+
+import System.IO           (Handle, hPutStrLn)
+import System.Exit         (exitSuccess)
+import Data.List           (isInfixOf, nub)
+import Data.Ratio          ((%))
+import Control.Applicative ((<$>),(<*>))
+import Control.Monad       (when)
+import Data.Maybe          (isNothing)
 
 -- }}}
 
@@ -51,7 +43,7 @@ main = do
 
     ldzenproc <- spawnPipe mydzenl
     spawn mydzenclockl
-    
+
     -- only spawn second set of dzen bars when 2+ monitors are connected
     numscreens <- countScreens
     if numscreens == (1 :: Integer)
@@ -65,19 +57,20 @@ main = do
 
 -- Main Config {{{
 
-conf = withNavigation2DConfig defaultNavigation2DConfig 
+conf = withNavigation2DConfig defaultNavigation2DConfig
         $ defaultConfig
         {
-          manageHook  = mymanagehook <+> namedScratchpadManageHook scratchpads -- <+> manageScratchPad 
-                        <+> manageHook defaultConfig <+> manageDocks 
+          manageHook  = mymanagehook <+> namedScratchpadManageHook scratchpads -- <+> manageScratchPad
+                        <+> manageHook defaultConfig <+> manageDocks
         , layoutHook  = mylayoutHook
         , terminal    = "roxterm"
         , modMask     = mod4Mask
         , borderWidth = 0
+        , startupHook = return () >> checkKeymap conf mykeysdualhead
         , workspaces  = wss
-        , focusFollowsMouse = True 
+        , focusFollowsMouse = True
         , handleEventHook = handleEventHook defaultConfig <+> fullscreenEventHook
-        } 
+        }
 
 dualheadconf = conf `additionalKeysP` mykeysdualhead `removeKeysP` notKeysP
 
@@ -108,8 +101,8 @@ myPPlog handle _ = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ dzen
                 }
         where
             -- add dzen clickable tags to each workspace
-            clickable s = wrap ("^ca(1, xdotool key super+" 
-                            ++ filter (\x->x `elem` ['1'..'9']) (deTagWS s) 
+            clickable s = wrap ("^ca(1, xdotool key super+"
+                            ++ filter (\x->x `elem` ['1'..'9']) (deTagWS s)
                             ++ ")") "^ca()" s
             --hide unnamed workspaces until they have windows
             showNamedWs ws = if any (`elem` ws) ['a'..'z']
@@ -160,7 +153,7 @@ mymanagehook = composeAll . concat $
     {-, [className =? "Gvim"          --> doShift (wss!!1) ]-}
     , [className =? "Gvim"          --> doF W.swapMaster ]
     , [className =? "Gmrun"         --> doSideFloat CW   ]
-    , [className =? "Yakuake"         --> doFloat          ]
+    , [title =? "Yakuake"         --> doFloat          ]
     , [className =? "Xmessage"      --> doFloat          ]
     , [className =? "Gsimplecal"    --> placeHook (withGaps (0,0,30,0) $ underMouse (0,0)) ]
     , [isFullscreen                 --> doFullFloat      ]
@@ -168,12 +161,12 @@ mymanagehook = composeAll . concat $
     , [fmap (not . isInfixOf c) title --> doF avoidMaster | c <- hiPriority ]
     , [isDialog                     --> (doFloat <+> doF W.focusUp) ]
     {-, [(fmap (isInfixOf c) title <&&> (qnot isDialog)) --> doF avoidMaster | c <- hiPriority ]-}
-    , [className =? "Gimp"          --> doShift (wss!!4) ] 
+    , [className =? "Gimp"          --> doShift (wss!!4) ]
     , [fmap (isInfixOf c) title --> doF W.focusUp | c <- pwds ]
-    ] 
+    ]
     {-<+>-}
     {-composeOne [  ]-}
-    where 
+    where
         -- These windows go to master pane when started
         hiPriority = ["Firefox", "Gvim", "Hexchat"]
         pwds = [ "Enter password", "Administrator privileges", "Select a Partition or Device" ]
@@ -194,8 +187,8 @@ avoidMaster = W.modify' $ \c -> case c of
 
 mylayoutHook =  smartBorders
                 $ avoidStruts
-                $ onWorkspace (wss!!1) vimlayout 
-                $ onWorkspace (head wss) firefoxlayout 
+                $ onWorkspace (wss!!1) vimlayout
+                $ onWorkspace (head wss) firefoxlayout
                   mainlayout
 
 mainlayout = Mirror tiled ||| reflectHoriz columns ||| columns
@@ -209,7 +202,7 @@ firefoxlayout = reflectHoriz ff ||| Full
     where
         ff = Tall  { tallNMaster = 1, tallRatio=4%5, tallRatioIncrement=3%100 }
 
-vimlayout = Mirror Tall { tallNMaster = 1, tallRatio=3%5, tallRatioIncrement=3%100 } 
+vimlayout = Mirror Tall { tallNMaster = 1, tallRatio=3%5, tallRatioIncrement=3%100 }
                 ||| Grid
                 ||| reflectHoriz Grid
                 ||| Tall { tallNMaster = 1, tallRatio=1%2, tallRatioIncrement=3%100 }
@@ -264,13 +257,14 @@ scratchpads = [
     tunes = customFloating $ W.RationalRect 0 0 1 0.5
     rect = customFloating $ W.RationalRect 0 0 1 0.4
     roxterm = "roxterm --separate --profile=scratchpad -T "
-    xterm ="xterm -xrm \"xterm*allowTitleOps: false\" -T " 
+    xterm ="xterm -xrm \"xterm*allowTitleOps: false\" -T "
     role = stringProperty "WM_WINDOW_ROLE"
 
 scratchpadBinds = [
          ("M-c" , namedScratchpadAction scratchpads "cmus")
         , ("M-z" , namedScratchpadAction scratchpads "notepad")
-        , ("`" , namedScratchpadAction scratchpads "floatterm")
+        --, ("`" , namedScratchpadAction scratchpads "floatterm") -- D:
+        , ("<F1>" , namedScratchpadAction scratchpads "floatterm")
         , ("M-[", withFocused (keysResizeWindow (0,60) (1,0)))
         , ("M-]", withFocused (keysResizeWindow (0,-60) (1,0)))
         ]
@@ -427,7 +421,6 @@ mykeysP =
         , ("M-b" , toggleWS )
         , ("M-f" , withFocused $ windows . W.sink)
         , ("M1-<F4>" , kill)
-        {-, ("M-p" , windows W.shiftMaster )-}
 
             -- lockscreen just picks a random wallpaper from a dual monitor
             -- folder and starts i3lock
@@ -435,13 +428,13 @@ mykeysP =
         , ("M-<Delete>"   , spawn "~/.lockscreen.sh")
         , ("M-S-q" , spawn $ "pkill dzen2; sleep 1; " ++ myrestart )
         , ("M-S-<Delete>" , io exitSuccess)
-        {-, ("<F8>" , spawn "~/bin/autoclick.sh" )-}
+        , ("<F8>" , spawn "~/bin/autoclick.sh" )
         ] ++
         scratchpadBinds
         where
           gvimcmd = "gvim --servername GVIM --remote-send '<Esc>:tabnew<CR>'; if [[ $? == 1 ]]; then gvim --servername GVIM; fi"
 
-notKeysP = 
+notKeysP =
     [
     "M-p"
     ]
@@ -449,12 +442,4 @@ notKeysP =
 -- }}}
 
 -- }}}
-
--- testing {{{
-
-
-
--- }}}
-
-
 

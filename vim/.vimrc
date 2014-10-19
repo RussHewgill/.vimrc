@@ -2,24 +2,19 @@
 "{{{
 set nocompatible              " be iMproved, required
 filetype off                  " required
-
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 " alternatively, pass a path where Vundle should install plugins
 "call vundle#begin('~/some/path/here')
-
 " let Vundle manage Vundle, required
 Plugin 'gmarik/Vundle.vim'
-Plugin 'scrooloose/nerdcommenter' 
+Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-surround'
-"Plugin 'tmhedberg/SimpylFold'
 Plugin 'godlygeek/tabular'
 Plugin 'Lokaltog/vim-easymotion'
 Plugin 'eagletmt/neco-ghc'
-"Plugin 'raichoo/haskell-vim'
-Plugin 'kien/ctrlp.vim'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 Plugin 'Valloric/YouCompleteMe'
@@ -30,7 +25,14 @@ Plugin 'fs111/pydoc.vim'
 Plugin 'Raimondi/delimitMate'
 Plugin 'https://github.com/tpope/vim-repeat'
 Plugin 'sjl/gundo.vim'
+Plugin 'https://github.com/xolox/vim-notes'
+Plugin 'https://github.com/xolox/vim-misc'
+Plugin 'https://github.com/coot/CRDispatcher'
+Plugin 'https://github.com/coot/cmdalias_vim'
 
+"Plugin 'kien/ctrlp.vim'
+"Plugin 'tmhedberg/SimpylFold'
+"Plugin 'raichoo/haskell-vim'
 "Plugin 'kchmck/vim-coffee-script'
 "Plugin 'davidhalter/jedi-vim'
 "Plugin 'Shougo/neocomplcache.vim'
@@ -126,6 +128,7 @@ vnoremap / /\v
 
 set ignorecase
 set smartcase
+set fileignorecase
 set gdefault
 set incsearch
 set showmatch
@@ -203,7 +206,16 @@ inoremap jj <Esc>i
 inoremap jl <Esc>la
 
 noremap <leader>tr :w<CR>:so %<cr>
+noremap <leader>tp :w<CR>:so %<cr>:PluginInstall<cr>
+noremap <leader>tu :w<CR>:so %<cr>:PluginClean<cr>
 noremap <leader>u :w<cr>:!%:p<cr><cr>
+
+noremap <leader>, :call StripWS()<cr>
+
+function! StripWS()
+    silent execute ':%s/\s\+$'
+    silent execute "call histdel('/', -1)"
+endfunction
 
 noremap ,. @:
 
@@ -222,8 +234,8 @@ function! Spacesurround()
     silent! call repeat#set("\<plug>Spacesurround", v:count)
 endfunction
 
-noremap n nzz
-noremap N Nzz
+"noremap n nzz
+"noremap N Nzz
 
 "Hardcore mode
 nnoremap <up> <nop>
@@ -239,7 +251,7 @@ nnoremap <Leader>tm :tabmove
 nnoremap <Leader>k :tabn<CR>
 nnoremap <Leader>j :tabp<CR>
 
-noremap <leader><leader>h :Pydoc<space>
+"noremap <leader><leader>h :Pydoc<space>
 
 nnoremap <Leader>tv :tabe ~/.vimrc<CR>
 nnoremap <Leader>tx :tabe ~/.xmonad/xmonad.hs<CR>
@@ -272,11 +284,12 @@ noremap <M-O> O
 
 "Split Commands
 
-nnoremap <Leader>ww <C-w>v<C-w>l
-nnoremap <Leader>we <C-w>n
-nnoremap <Leader>- <C-w>-
-nnoremap <Leader>= <C-w>=
-nnoremap <Leader>+ <C-w>+
+noremap <Leader>ww <C-w>v
+noremap <Leader>we <C-w>s
+noremap <Leader>- <C-w>-
+noremap <Leader>= <C-w>=
+noremap <Leader>+ <C-w>+
+noremap <leader>wt <C-w>T
 
 nnoremap <C-h> <C-w>h
 nnoremap <C-k> <C-w>k
@@ -298,6 +311,73 @@ noremap Q @@
 
 "Plugin Settings
 "{{{
+
+" Syntastic
+"{{{
+
+noremap <leader>e :call ToggleErrors()<cr>
+noremap <leader>ll :call Togglehlint()<cr>
+noremap <leader>le :call SyntaxToggleModeAL()<cr>
+noremap <leader>lw :AirlineToggleWhitespace<cr>
+noremap [e :lprev<cr>
+noremap ]e :lnext<cr>
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_c_checkers               = [ 'gcc' ]
+let g:syntastic_python_checkers          = ['python', 'pep8']
+let g:syntastic_javascript_checkers      = [ 'jshint' ]
+let g:syntastic_coffee_checkers          = [ 'coffeelint' ]
+let g:syntastic_haskell_checkers         = [ 'hdevtools', 'hlint' ]
+
+let g:syntastic_coffee_coffeelint_args = "--csv --file /usr/lib/node_modules/coffeelint/coffeelint.json"
+let g:syntastic_haskell_ghc_mod_args   = "-g -fno-warn-missing-signatures"
+let g:syntastic_haskell_hdevtools_args = '-g -Wall -g -fno-warn-unused-binds
+    \ -g -fno-warn-unused-imports -g -fno-warn-missing-signatures -g -fno-hs-main
+    \ -g -fno-warn-deprecations'
+"let g:syntastic_asm_dialect = 'nasm'
+
+let g:syntastic_python_pylint_rcfile = '/home/russ/.pylintrc'
+let g:syntastic_python_python_exec   = '/usr/bin/python'
+
+let g:syntastic_mode_map = { 'mode': 'active',
+                        \ 'active_filetypes': [],
+                        \ 'passive_filetypes': [] }
+
+let g:syntastic_auto_loc_list = 0
+
+let g:hask_warning_mode = '#'
+let g:hask_error_mode   = '#'
+
+function! SyntaxToggleModeAL()
+    silent execute "SyntasticToggleMode"
+    if g:syntastic_mode_map['mode'] == 'passive'
+        silent execute "let g:hask_error_mode = 'O'"
+    else
+        silent execute "let g:hask_error_mode = '#'"
+    endif
+endfunction
+
+function! ToggleErrors()
+    let old_last_winnr = winnr('$')
+    lclose
+    if old_last_winnr == winnr('$')
+        Errors
+    endif
+endfunction
+
+function! Togglehlint()
+    if g:syntastic_haskell_checkers == ['hdevtools', 'hlint']
+        silent execute "let g:syntastic_haskell_checkers = ['hdevtools']"
+        silent execute "let g:syntastic_haskell_hdevtools_args = '-g -w'"
+        silent execute "let g:hask_warning_mode = 'O'"
+    else
+        silent execute "let g:syntastic_haskell_checkers = ['hdevtools', 'hlint']"
+        silent execute "let g:syntastic_haskell_hdevtools_args = '-g -Wall -g -fno-warn-unused-binds -g -fno-warn-unused-imports -g -fno-warn-missing-signatures -g -fno-hs-main -g -fno-warn-deprecations'"
+        silent execute "let g:hask_warning_mode = '#'"
+    endif
+endfunction
+
+"}}}
 
 " Gundo
 "{{{
@@ -344,7 +424,7 @@ let g:ycm_seed_identifiers_with_syntax                  = 1
 let g:ycm_key_detailed_diagnostics                      = ''
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_add_preview_to_completeopt                    = 0
-let g:ycm_semantic_triggers                             = { 'haskell' : ['.'],  
+let g:ycm_semantic_triggers                             = { 'haskell' : ['.'],
                             \ 'bash' : ['#!'], 'python' : [] }
 
 
@@ -356,62 +436,11 @@ nnoremap <leader>h :YcmCompleter GoTo<CR>
 " {{{
 
 let g:UltiSnipsExpandTrigger="<C-s>"
-let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/Ultisnips"
+"let g:UltiSnipsSnippetsDir = "~/.vim/bundle/vim-snippets/Ultisnips"
+let g:UltiSnipsSnippetsDir = "~/.vim/UltiSnips/"
+
 
 " }}}
-
-" Syntastic
-"{{{
-
-let g:syntastic_c_checkers = [ 'gcc' ]
-let g:syntastic_python_checkers = ['python', 'pep8']
-let g:syntastic_javascript_checkers = [ 'jshint' ]
-let g:syntastic_coffee_checkers = [ 'coffeelint' ]
-let g:syntastic_haskell_checkers = [ 'hdevtools', 'hlint' ]
-
-let g:syntastic_coffee_coffeelint_args = "--csv --file /usr/lib/node_modules/coffeelint/coffeelint.json"
-let g:syntastic_haskell_ghc_mod_args = "-g -fno-warn-missing-signatures"
-let g:syntastic_haskell_hdevtools_args = '-g -Wall -g -fno-warn-unused-binds
-    \ -g -fno-warn-unused-imports -g -fno-warn-missing-signatures -g -fno-hs-main
-    \ -g -fno-warn-deprecations'
-"let g:syntastic_asm_dialect = 'nasm'
-
-let g:syntastic_python_pylint_rcfile='/home/russ/.pylintrc'
-let g:syntastic_python_python_exec = '/usr/bin/python'
-
-let g:syntastic_mode_map = { 'mode': 'active',
-                        \ 'active_filetypes': [],
-                        \ 'passive_filetypes': [] }
-
-
-
-let g:syntastic_auto_loc_list=0
-"noremap <silent> <leader>b :SyntasticCheck mypy<CR>:Errors<CR>
-"noremap <silent> <leader>v :lclose<CR>
-
-noremap <leader>e :call ToggleErrors()<cr>
-noremap <leader><leader>e :SyntasticToggleMode<cr>
-
-function! ToggleErrors()
-    let old_last_winnr = winnr('$')
-    lclose
-    if old_last_winnr == winnr('$')
-        " Nothing was closed, open syntastic error location panel
-        Errors
-    endif
-endfunction
-
-noremap <leader>l :call Togglehlint()<cr>
-
-function! Togglehlint()
-    if g:syntastic_haskell_checkers == ['hdevtools', 'hlint']
-        silent execute "let g:syntastic_haskell_checkers = ['hdevtools']"
-    else
-        silent execute "let g:syntastic_haskell_checkers = ['hdevtools', 'hlint']"
-    endif
-endfunction
-
-"}}}
 
 "Haskell-vim
 "{{{
@@ -454,8 +483,26 @@ set completeopt=longest,menu
 "Airline Setup
 "{{{
 
-let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#whitespace#enabled = 1
 let g:airline#extensions#Syntastic#enabled = 0
+let g:airline_powerline_fonts=1
+
+function! Getsyntaxmode()
+    if g:airline#extensions#whitespace#enabled == 1
+        let l:wsmode = '#'
+    else
+        let l:wsmode = 'O'
+    endif
+    return (g:hask_error_mode . g:hask_warning_mode . l:wsmode)
+endfunction
+
+call airline#parts#define_function('syntaxmode', 'Getsyntaxmode')
+
+
+function! HaskAirline()
+    let g:airline_section_z = airline#section#create(['syntaxmode',' ','windowswap', '%3p%%',' ', 'linenr', ':%3c '])
+endfunction
+autocmd BufRead,BufNewFile *.hs call HaskAirline()
 
 "}}}
 
@@ -463,6 +510,14 @@ let g:airline#extensions#Syntastic#enabled = 0
 
 " Other tweaks
 "{{{
+
+" Command Aliases
+augroup VIMRC_aliases
+    au!
+    "set bw to bd
+    au VimEnter * CmdAlias bw bd
+    au VimEnter * CmdAlias ech TabMessage
+augroup END
 
 "import System.Randomedit home
 cabbrev E <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'e ~/ <Backspace>' : 'E')<CR>
@@ -476,7 +531,7 @@ function! TabMessage(cmd)
 endfunction
 
 command! -nargs=+ -complete=command TabMessage call TabMessage(<q-args>)
-cabbrev ech <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'TabMessage' : 'ech')<CR>
+"cabbrev ech <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'TabMessage' : 'ech')<CR>
 
 "fix cabal
 let $PATH=$PATH . ':/home/russ/.cabal/bin'
@@ -488,12 +543,6 @@ au FocusLost * :wa
 command! W w !sudo tee % > /dev/null
 
 "" Return to last edit position when opening files (You want this!)
-"autocmd BufReadPost *
-     "\ if line("'\"") > 0 && line("'\"") <= line("$") |
-     "\   exe "normal! g`\"" |
-     "\ endif
-"" Remember info about open buffers on close
-"set viminfo^=%
 
 if has("autocmd")
     au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
