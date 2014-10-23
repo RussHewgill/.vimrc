@@ -65,7 +65,6 @@ filetype plugin indent on    " required
 "Settings
 "{{{
 "
-"{{{
 
 set tabstop=4
 set shiftwidth=4
@@ -139,7 +138,6 @@ vnoremap <silent> ,, :let @/=""<cr>
 
 nnoremap <tab> %
 vnoremap <tab> %
-"}}}
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 "Colors and Fonts
@@ -170,6 +168,9 @@ if has("gui_running")
     set guioptions-=m
     set guioptions-=r
     set guioptions-=l
+    set guioptions-=L
+    set guioptions-=r
+    set guioptions-=R
     set guioptions-=b
     set guitablabel=%M\ %t
     set guiheadroom=0
@@ -208,13 +209,13 @@ inoremap jl <Esc>la
 noremap <leader>tr :w<CR>:so %<cr>
 noremap <leader>tp :w<CR>:so %<cr>:PluginInstall<cr>
 noremap <leader>tu :w<CR>:so %<cr>:PluginClean<cr>
-noremap <leader>u :w<cr>:!%:p<cr><cr>
+noremap <leader>u :w<cr>:silent! execute ":!%:p"<cr><cr>
 
 noremap <leader>, :call StripWS()<cr>
 
 function! StripWS()
-    silent execute ':%s/\s\+$'
-    silent execute "call histdel('/', -1)"
+    silent! execute ':%s/\s\+$'
+    silent! execute "call histdel('/', -1)"
 endfunction
 
 noremap ,. @:
@@ -286,6 +287,7 @@ noremap <M-O> O
 
 noremap <Leader>ww <C-w>v
 noremap <Leader>we <C-w>s
+noremap <Leader>wr <C-w>r
 noremap <Leader>- <C-w>-
 noremap <Leader>= <C-w>=
 noremap <Leader>+ <C-w>+
@@ -318,6 +320,7 @@ noremap Q @@
 noremap <leader>e :call ToggleErrors()<cr>
 noremap <leader>ll :call Togglehlint()<cr>
 noremap <leader>le :call SyntaxToggleModeAL()<cr>
+noremap <leader>lc :SyntasticReset<cr>
 noremap <leader>lw :AirlineToggleWhitespace<cr>
 noremap [e :lprev<cr>
 noremap ]e :lnext<cr>
@@ -331,6 +334,7 @@ let g:syntastic_haskell_checkers         = [ 'hdevtools', 'hlint' ]
 
 let g:syntastic_coffee_coffeelint_args = "--csv --file /usr/lib/node_modules/coffeelint/coffeelint.json"
 let g:syntastic_haskell_ghc_mod_args   = "-g -fno-warn-missing-signatures"
+let g:syntastic_haskell_hlint_args = " --hint=Custom"
 let g:syntastic_haskell_hdevtools_args = '-g -Wall -g -fno-warn-unused-binds
     \ -g -fno-warn-unused-imports -g -fno-warn-missing-signatures -g -fno-hs-main
     \ -g -fno-warn-deprecations'
@@ -423,12 +427,14 @@ let g:ycm_collect_identifiers_from_tags_files           = 1
 let g:ycm_seed_identifiers_with_syntax                  = 1
 let g:ycm_key_detailed_diagnostics                      = ''
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_complete_in_comments                          = 1
 let g:ycm_add_preview_to_completeopt                    = 0
 let g:ycm_semantic_triggers                             = { 'haskell' : ['.'],
                             \ 'bash' : ['#!'], 'python' : [] }
 
-
 nnoremap <leader>h :YcmCompleter GoTo<CR>
+au! BufRead,BufNewFile *.hs setlocal omnifunc=necoghc#omnifunc
+
 
 " }}}
 

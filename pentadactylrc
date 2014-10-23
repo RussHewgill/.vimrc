@@ -77,7 +77,14 @@ map -b <C-S-s> :set nsu!=<A-Tab>
 map <C-S-k> <pass>
 map <C-S-j> <pass>
 
+"Open in Chromium
+map -b <A-c> :chro<cr>
+
+com chro execute "silent !chromium " + window.content.location.href
+
 com -nargs=1 -complete help th tab :help <args>
+
+
 
 "Find
 set hlfind

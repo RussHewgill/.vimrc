@@ -19,11 +19,10 @@ import XMonad.Hooks.Place               (placeHook, withGaps, underMouse)
 import XMonad.Layout.IndependentScreens (countScreens)
 import XMonad.Layout.NoBorders          (smartBorders)
 import XMonad.Layout.PerWorkspace       (onWorkspace)
-import XMonad.Layout.Reflect            (reflectHoriz, reflectVert)
+import XMonad.Layout.Reflect            (reflectHoriz)
 import XMonad.Util.Run                  (spawnPipe)
 import XMonad.Util.WindowProperties     (allWithProperty,Property (ClassName))
 import XMonad.Util.WorkspaceCompare     (getSortByIndex)
-import XMonad.Util.Paste                (sendKey,noModMask)
 
 import System.IO           (Handle, hPutStrLn)
 import System.Exit         (exitSuccess)
@@ -51,7 +50,7 @@ main = do
         else do
         rdzenproc <- spawnPipe mydzenr
         spawn mydzenclockr
-        xmonad $ ewmh $ runbars dualheadconf ldzenproc (Just rdzenproc)
+        xmonad . ewmh $ runbars dualheadconf ldzenproc (Just rdzenproc)
 
 -- }}}
 
@@ -145,24 +144,23 @@ emptywsfg = "#888888"
 
 mymanagehook = composeAll . concat $
     [ [className =? "Firefox"  <&&> resource =? "Navigator" --> doShift (head wss) ]
-    , [className =? "Firefox"       --> doF W.swapMaster ]
-    , [role =? "pentagvim"            --> doShift (head wss) <+> rect ]
+    , [className =? "Firefox"                               --> doF W.swapMaster ]
+    , [role =? "pentagvim"                                  --> doShift (head wss) <+> rect ]
     , [className =? "Firefox" <&&> resource /=? "Navigator" --> doFloat]
-    , [className =? "Clementine"    --> doShift (wss!!2) ]
-    --TODO: only move if no other gvim is running
-    {-, [className =? "Gvim"          --> doShift (wss!!1) ]-}
-    , [className =? "Gvim"          --> doF W.swapMaster ]
-    , [className =? "Gmrun"         --> doSideFloat CW   ]
-    , [title =? "Yakuake"         --> doFloat          ]
-    , [className =? "Xmessage"      --> doFloat          ]
-    , [className =? "Gsimplecal"    --> placeHook (withGaps (0,0,30,0) $ underMouse (0,0)) ]
-    , [isFullscreen                 --> doFullFloat      ]
-    , [isFullscreen                 --> (doF W.focusDown <+> doFullFloat)]
-    , [fmap (not . isInfixOf c) title --> doF avoidMaster | c <- hiPriority ]
-    , [isDialog                     --> (doFloat <+> doF W.focusUp) ]
-    {-, [(fmap (isInfixOf c) title <&&> (qnot isDialog)) --> doF avoidMaster | c <- hiPriority ]-}
-    , [className =? "Gimp"          --> doShift (wss!!4) ]
-    , [fmap (isInfixOf c) title --> doF W.focusUp | c <- pwds ]
+    , [className =? "Clementine"                            --> doShift (wss!!2) ]
+    , [className =? "Gvim"                                  --> doF W.swapMaster ]
+    , [className =? "Gmrun"                                 --> doSideFloat CW   ]
+    , [title =? "Yakuake"                                   --> doFloat          ]
+    , [title =? "Terminator Preferences"                    --> doFloat          ]
+    , [className =? "Xmessage"                              --> doFloat          ]
+    , [className =? "Gsimplecal"            --> placeHook (withGaps (0,0,30,0) $ underMouse (0,0)) ]
+    , [isFullscreen                                         --> doFullFloat      ]
+    , [isFullscreen                                         --> (doF W.focusDown <+> doFullFloat)]
+    , [fmap (not . isInfixOf c) title                       --> doF avoidMaster | c <- hiPriority ]
+    , [isDialog                                             --> (doFloat <+> doF W.focusUp) ]
+    {-, [(fmap (isInfixOf c) title <&&> (qnot isDialog))    --> doF avoidMaster | c <- hiPriority ]-}
+    , [className =? "Gimp"                                  --> doShift (wss!!4) ]
+    , [fmap (isInfixOf c) title                             --> doF W.focusUp | c <- pwds ]
     ]
     {-<+>-}
     {-composeOne [  ]-}
@@ -186,8 +184,8 @@ avoidMaster = W.modify' $ \c -> case c of
 -- Layouthook {{{
 
 mylayoutHook =  smartBorders
-                $ avoidStruts
-                $ onWorkspace (wss!!1) vimlayout
+                . avoidStruts
+                . onWorkspace (wss!!1) vimlayout
                 $ onWorkspace (head wss) firefoxlayout
                   mainlayout
 
@@ -249,6 +247,7 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-160-*-*-*-*-*-*' "
 -- Scratchpad {{{
 
 scratchpads = [
+    --NS "floatterm" (terminator ++ "floatterm") ( title =? "floatterm") rect
     NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
   , NS "cmus" (xterm ++ "cmus -e ~/bin/cmus.sh") ( title =? "cmus") tunes
   , NS "notepad" "exec gvim --servername notepad -f --role notepad ~/Documents/notepad" ( role =? "notepad") rect
@@ -257,13 +256,14 @@ scratchpads = [
     tunes = customFloating $ W.RationalRect 0 0 1 0.5
     rect = customFloating $ W.RationalRect 0 0 1 0.4
     roxterm = "roxterm --separate --profile=scratchpad -T "
+    --terminator = "terminator -T "
     xterm ="xterm -xrm \"xterm*allowTitleOps: false\" -T "
     role = stringProperty "WM_WINDOW_ROLE"
 
 scratchpadBinds = [
          ("M-c" , namedScratchpadAction scratchpads "cmus")
-        , ("M-z" , namedScratchpadAction scratchpads "notepad")
-        --, ("`" , namedScratchpadAction scratchpads "floatterm") -- D:
+        --, ("M-z" , namedScratchpadAction scratchpads "notepad")
+        , ("<F2>" , namedScratchpadAction scratchpads "notepad")
         , ("<F1>" , namedScratchpadAction scratchpads "floatterm")
         , ("M-[", withFocused (keysResizeWindow (0,60) (1,0)))
         , ("M-]", withFocused (keysResizeWindow (0,-60) (1,0)))
@@ -318,15 +318,15 @@ repeatX f n = f >> repeatX f (n-1)
 isbound x = if ("M-" ++ [x]) `elem` availablebinds then "Unbound" else "Bound"
 
 availablebinds = filter (`notElem` currentbinds) allbinds
-currentbinds  = nub (map fst mykeysdualhead) ++ defaultbinds
+currentbinds  = nub (fmap fst mykeysdualhead) ++ defaultbinds
 allbinds = (++) <$> mods <*> keyslist
 
-keyslist = map (:[]) $ ['1'..'9'] ++ ['a'..'z']
+keyslist = fmap (:[]) $ ['1'..'9'] ++ ['a'..'z']
 mods     = ["M-", "M-S-", "M-C-"]
 
 -- Others {{{
 
-defaultbinds = ["M-S-<Return>", "M-<Space>", "M-S-<Space>", "M-p", "M-S-p", "M-S-c", "M-n", "Mod-<Tab>", "M-S-<Tab>", "M-j", "M-k", "M-m", "M-<Return>", "M-S-j", "M-S-k", "M-h", "M-l", "M-t", "M-comma", "M-period", "M-S-q", "M-q", "M-w", "M-e", "M-r"] ++ map (("M-"++) . (:[])) ['1'..'9']
+defaultbinds = ["M-S-<Return>", "M-<Space>", "M-S-<Space>", "M-p", "M-S-p", "M-S-c", "M-n", "Mod-<Tab>", "M-S-<Tab>", "M-j", "M-k", "M-m", "M-<Return>", "M-S-j", "M-S-k", "M-h", "M-l", "M-t", "M-comma", "M-period", "M-S-q", "M-q", "M-w", "M-e", "M-r"] ++ fmap (("M-"++) . (:[])) ['1'..'9']
 
 others = ["<Backspace>", "<Tab>", "<Return>", "<Pause>", "<Scroll_lock>", "<Sys_Req>", "<Print>", "<Escape>, <Esc>", "<Delete>", "<Home>", "<Left>, <L>", "<Up>, <U>", "<Right>, <R>", "<Down>, <D>", "<Page_Up>", "<Page_Down>", "<End>", "<Insert>", "<Break>", "<Space>", "<F1>-<F24>", "<KP_Space>", "<KP_Tab>", "<KP_Enter>", "<KP_F1>", "<KP_F2>", "<KP_F3>", "<KP_F4>", "<KP_Home>", "<KP_Left>", "<KP_Up>", "<KP_Right>", "<KP_Down>", "<KP_Prior>", "<KP_Page_Up>", "<KP_Next>", "<KP_Page_Down>", "<KP_End>", "<KP_Begin>", "<KP_Insert>", "<KP_Delete>", "<KP_Equal>", "<KP_Multiply>", "<KP_Add>", "<KP_Separator>", "<KP_Subtract>", "<KP_Decimal>", "<KP_Divide>", "<KP_0>-<KP_9>"]
 
@@ -341,17 +341,17 @@ mykeysdualhead = mykeysP ++ [
         ]
         ++
         [ (otherModMasks ++ "M-" ++ key, action tag)
-            | (tag, key) <- zip mywssl $ map (drop 1 . dropWhile (/='_')) mywssl
+            | (tag, key) <- zip mywssl $ fmap (drop 1 . dropWhile (/='_')) mywssl
             , (otherModMasks, action) <- [  ("", screenswitch 0)
                                             , ("S-", windows . W.shift ) ]]
         ++
         [ (otherModMasks ++ "M-" ++ key, action tag)
-            | (tag, key) <- zip mywssr $ map (drop 1 . dropWhile (/='_')) mywssr
+            | (tag, key) <- zip mywssr $ fmap (drop 1 . dropWhile (/='_')) mywssr
             , (otherModMasks, action) <- [  ("", screenswitch 1)
                                             , ("S-", windows . W.shift ) ]]
         ++  -- Disable Greedy Switching
         [ (otherModMasks ++ "M-" ++ [key], action tag)
-            | (tag, key) <- zip mywsso $ concatMap show [(length mywssl + length mywssr)+1..9]
+            | (tag, key) <- zip mywsso $ (=<<) show [(length mywssl + length mywssr)+1..9]
             , (otherModMasks, action) <- [  ("", toggleOrViewNoSP )
                                             , ("S-", windows . W.shift ) ]]
         where
@@ -393,8 +393,8 @@ mykeysP =
 
             -- Launch Apps
         , ("M-d" , spawn "gmrun")
-        {-, ("M-d" , (inputPrompt defaultXPConfig "wat" ?+ spawn) )-}
         , ("M-t" , spawn "roxterm --profile=Default")
+        --, ("M-t" , spawn "terminator")
             --TODO: stop from launching more windows
         , ("M-g" , singlespawn "Firefox" "firefox")
         --, ("M-g" , spawn "firefox-beta-bin" )
