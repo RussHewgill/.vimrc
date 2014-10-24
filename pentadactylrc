@@ -78,13 +78,12 @@ map <C-S-k> <pass>
 map <C-S-j> <pass>
 
 "Open in Chromium
-map -b <A-c> :chro<cr>
+map -b -modes=n,v gv :dlyt<cr>
 
-com chro execute "silent !chromium " + window.content.location.href
+"com chro execute "silent !(chromium '" + window.content.location.href + "' &)"
+com dlyt execute "silent !(vlc '" + window.content.location.href + "' &)"
 
 com -nargs=1 -complete help th tab :help <args>
-
-
 
 "Find
 set hlfind

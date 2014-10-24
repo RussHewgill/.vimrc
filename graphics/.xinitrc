@@ -14,6 +14,7 @@ xrandr --output HDMI-1-0 --pos 1920x0
 xrandr --dpi 84
 
 source ~/initsettings.sh
+
 if [[ -e ~/Documents/.notepad.swp ]]; then
     rm ~/Documents/.notepad.swp
 fi
