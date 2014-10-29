@@ -22,14 +22,17 @@ Plugin 'bruno-/vim-husk'
 Plugin 'kana/vim-textobj-user'
 Plugin 'nelstrom/vim-textobj-rubyblock'
 Plugin 'fs111/pydoc.vim'
-Plugin 'Raimondi/delimitMate'
-Plugin 'https://github.com/tpope/vim-repeat'
+Plugin 'tpope/vim-repeat'
 Plugin 'sjl/gundo.vim'
-Plugin 'https://github.com/xolox/vim-notes'
-Plugin 'https://github.com/xolox/vim-misc'
-Plugin 'https://github.com/coot/CRDispatcher'
-Plugin 'https://github.com/coot/cmdalias_vim'
+Plugin 'xolox/vim-notes'
+Plugin 'xolox/vim-misc'
+Plugin 'coot/CRDispatcher'
+Plugin 'coot/cmdalias_vim'
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'rhysd/clever-f.vim'
+Plugin 'taglist.vim'
 
+"Plugin 'tpope/vim-fireplace'
 "Plugin 'kien/ctrlp.vim'
 "Plugin 'tmhedberg/SimpylFold'
 "Plugin 'raichoo/haskell-vim'
@@ -103,8 +106,6 @@ set noerrorbells
 set novisualbell
 set t_vb=
 "set tm=500
-
-syntax on
 
 set wrap
 set textwidth=79
@@ -207,9 +208,21 @@ inoremap jj <Esc>i
 inoremap jl <Esc>la
 
 noremap <leader>tr :w<CR>:so %<cr>
-noremap <leader>tp :w<CR>:so %<cr>:PluginInstall<cr>
+noremap <leader>ti :w<CR>:so %<cr>:PluginInstall<cr>
 noremap <leader>tu :w<CR>:so %<cr>:PluginClean<cr>
+
+nnoremap <Leader>ta :tabe ~/.config/.aliases<CR>
+nnoremap <Leader>tp :tabe ~/.pentadactylrc<CR>
+nnoremap <Leader>tz :tabe ~/.zshrc<CR>
+nnoremap <Leader>tx :tabe ~/.xmonad/xmonad.hs<CR>
+nnoremap <Leader>tv :tabe ~/.vimrc<CR>
+nnoremap <Leader>tm :tabmove
+nnoremap <Leader>tq :tabclose<cr>
+nnoremap <Leader>to :tabonly<cr>
+nnoremap <Leader>tn :tabnew<cr>
 noremap <leader>u :w<cr>:silent! execute ":!%:p"<cr><cr>
+
+noremap <F4> :TlistToggle<cr>
 
 noremap <leader>, :call StripWS()<cr>
 
@@ -223,10 +236,6 @@ noremap ,. @:
 cnoremap <C-p> <up>
 cnoremap <C-n> <down>
 
-"TODO: make work
-"noremap y<space> i<space><right><space><esc>
-
-"noremap y<space> :call Spacesurround()<cr>
 nnoremap <Plug>Spacesurround :call Spacesurround()<cr>
 nmap ,<space> <Plug>Spacesurround
 
@@ -235,30 +244,16 @@ function! Spacesurround()
     silent! call repeat#set("\<plug>Spacesurround", v:count)
 endfunction
 
-"noremap n nzz
-"noremap N Nzz
-
 "Hardcore mode
 nnoremap <up> <nop>
 nnoremap <down> <nop>
 nnoremap <left> <nop>
 nnoremap <right> <nop>
 
-nnoremap <Leader>tn :tabnew<cr>
-nnoremap <Leader>to :tabonly<cr>
-nnoremap <Leader>tq :tabclose<cr>
-nnoremap <Leader>tm :tabmove
 
 nnoremap <Leader>k :tabn<CR>
 nnoremap <Leader>j :tabp<CR>
 
-"noremap <leader><leader>h :Pydoc<space>
-
-nnoremap <Leader>tv :tabe ~/.vimrc<CR>
-nnoremap <Leader>tx :tabe ~/.xmonad/xmonad.hs<CR>
-nnoremap <Leader>tz :tabe ~/.zshrc<CR>
-nnoremap <Leader>ta :tabe ~/.config/.aliases<CR>
-nnoremap <Leader>ti :tabe /usr/lib/python3.4/site-packages/prompt_toolkit/key_bindings/vi.py<CR>
 
 map <Leader>y "*y
 map <Leader>d "*d
@@ -269,28 +264,29 @@ map <Leader><Leader>d "+d
 map <Leader><Leader>p "+p
 
 "Tabularize
-nnoremap <Leader><Tab> :Tabularize /\s\zs=\s.*/<cr>
-nnoremap <Leader><Leader><Tab> :Tabularize /
+noremap <Leader><Tab> :Tabularize /\s\zs=\s.*/<cr>
+noremap <Leader><Leader><Tab> :Tabularize /
+noremap ,<tab> :Tabu<up><cr>
 
 noremap ; :
 noremap <C-f> ;
 noremap <C-c> ,
 noremap \ ;
 
-nnoremap o o<esc>
-nnoremap O O<esc>
+"nnoremap o o<esc>
+"nnoremap O O<esc>
 
-noremap <M-o> o
-noremap <M-O> O
+noremap <enter> o<esc>
+noremap <S-enter> O<esc>
 
 "Split Commands
 
 noremap <Leader>ww <C-w>v
 noremap <Leader>we <C-w>s
 noremap <Leader>wr <C-w>r
-noremap <Leader>- <C-w>-
+noremap <Leader>- 5<C-w>-
 noremap <Leader>= <C-w>=
-noremap <Leader>+ <C-w>+
+noremap <Leader>+ 5<C-w>+
 noremap <leader>wt <C-w>T
 
 nnoremap <C-h> <C-w>h
@@ -301,7 +297,8 @@ nnoremap <C-l> <C-w>l
 noremap <C-y> 5<C-y>
 noremap <C-e> 5<C-e>
 
-"noremap <leader>c gc
+inoremap <C-y> <C-o>5<C-y>
+inoremap <C-e> <C-o>5<C-e>
 
 noremap Q @@
 
@@ -326,15 +323,16 @@ noremap [e :lprev<cr>
 noremap ]e :lnext<cr>
 
 let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_c_checkers               = [ 'gcc' ]
-let g:syntastic_python_checkers          = ['python', 'pep8']
+let g:syntastic_c_checkers               = [ 'gcc', 'clang_tidy' ]
+let g:syntastic_python_checkers          = [ 'python', 'pep8']
 let g:syntastic_javascript_checkers      = [ 'jshint' ]
 let g:syntastic_coffee_checkers          = [ 'coffeelint' ]
 let g:syntastic_haskell_checkers         = [ 'hdevtools', 'hlint' ]
 
 let g:syntastic_coffee_coffeelint_args = "--csv --file /usr/lib/node_modules/coffeelint/coffeelint.json"
 let g:syntastic_haskell_ghc_mod_args   = "-g -fno-warn-missing-signatures"
-let g:syntastic_haskell_hlint_args = " --hint=Custom"
+let g:syntastic_cppcheck_config_file   = "/usr/shar/cppcheck/cfg/std.cfg"
+let g:syntastic_haskell_hlint_args     = " --hint=Custom"
 let g:syntastic_haskell_hdevtools_args = '-g -Wall -g -fno-warn-unused-binds
     \ -g -fno-warn-unused-imports -g -fno-warn-missing-signatures -g -fno-hs-main
     \ -g -fno-warn-deprecations'
@@ -418,6 +416,13 @@ let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 
 " }}}
 
+" AutoPairs
+" {{{
+
+let g:AutoPairsCenterLine = 0
+
+" }}}
+
 " YouCompleteMe
 " {{{
 
@@ -427,6 +432,7 @@ let g:ycm_collect_identifiers_from_tags_files           = 1
 let g:ycm_seed_identifiers_with_syntax                  = 1
 let g:ycm_key_detailed_diagnostics                      = ''
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_confirm_extra_conf                            = 0
 let g:ycm_complete_in_comments                          = 1
 let g:ycm_add_preview_to_completeopt                    = 0
 let g:ycm_semantic_triggers                             = { 'haskell' : ['.'],
@@ -437,6 +443,13 @@ au! BufRead,BufNewFile *.hs setlocal omnifunc=necoghc#omnifunc
 
 
 " }}}
+
+" Slimv
+"{{{
+
+"let g:slimv_swank_cmd = '! xterm -e sbcl --load /home/russ/.vim/bundle/slimv.vim/slime/start-swank.lisp &'
+
+"}}}
 
 " Ultisnips
 " {{{
@@ -556,7 +569,7 @@ endif
 
 augroup BgHighlight
     au!
-    au FocusGained * set colorcolumn=83
+    au FocusGained * set colorcolumn=81
     au FocusLost * set colorcolumn=0
 augroup end
 
@@ -572,6 +585,10 @@ augroup end
 au BufRead,BufNewFile *.py2 set filetype=python
 au BufRead,BufNewFile *.py2 let g:syntastic_python_python_exec = '/usr/bin/python2'
 au BufRead,BufNewFile *.py2 let g:syntastic_python_checkers = ['python', 'pyflakes']
+
+au BufRead,BufNewFile *.x set filetype=alex
+
+au BufRead,BufNewFile *.clj,*.cl,*.lisp set omnifunc=syntaxcomplete#Complete
 
 " change this if i ever need to use perl
 " Welp, perl

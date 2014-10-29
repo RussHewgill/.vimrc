@@ -11,7 +11,8 @@ import XMonad.Util.EZConfig
 import XMonad.Util.NamedScratchpad
 import qualified XMonad.StackSet as W
 
-import XMonad.Actions.FloatKeys         (keysResizeWindow)
+import XMonad.Actions.FloatKeys
+import XMonad.Actions.FloatSnap
 import XMonad.Actions.Navigation2D      (withNavigation2DConfig,defaultNavigation2DConfig,windowGo,windowSwap)
 import XMonad.Actions.PhysicalScreens   (viewScreen)
 import XMonad.Hooks.EwmhDesktops        (ewmh,fullscreenEventHook)
@@ -71,7 +72,7 @@ conf = withNavigation2DConfig defaultNavigation2DConfig
         , handleEventHook = handleEventHook defaultConfig <+> fullscreenEventHook
         }
 
-dualheadconf = conf `additionalKeysP` mykeysdualhead `removeKeysP` notKeysP
+dualheadconf = conf `additionalKeysP` mykeysdualhead `removeKeysP` notKeysP `additionalMouseBindings` mymousebuttons
 
 laptopconf = conf `additionalKeysP` mykeysonehead `removeKeysP` notKeysP
 
@@ -200,10 +201,10 @@ firefoxlayout = reflectHoriz ff ||| Full
     where
         ff = Tall  { tallNMaster = 1, tallRatio=4%5, tallRatioIncrement=3%100 }
 
-vimlayout = Mirror Tall { tallNMaster = 1, tallRatio=3%5, tallRatioIncrement=3%100 }
-                ||| Grid
+vimlayout =         Grid
                 ||| reflectHoriz Grid
                 ||| Tall { tallNMaster = 1, tallRatio=1%2, tallRatioIncrement=3%100 }
+                ||| Mirror Tall { tallNMaster = 1, tallRatio=3%5, tallRatioIncrement=3%100 }
 
 columns = Tall { tallNMaster = 1, tallRatio=1%2, tallRatioIncrement=3%100 }
 
@@ -247,26 +248,32 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-160-*-*-*-*-*-*' "
 -- Scratchpad {{{
 
 scratchpads = [
-    --NS "floatterm" (terminator ++ "floatterm") ( title =? "floatterm") rect
     NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
+  --, NS "floatterm90" (roxterm ++ "floatterm90") ( title =? "floatterm90") rect90
   , NS "cmus" (xterm ++ "cmus -e ~/bin/cmus.sh") ( title =? "cmus") tunes
   , NS "notepad" "exec gvim --servername notepad -f --role notepad ~/Documents/notepad" ( role =? "notepad") rect
   ]
   where
     tunes = customFloating $ W.RationalRect 0 0 1 0.5
-    rect = customFloating $ W.RationalRect 0 0 1 0.4
+    rect = customFloating $ W.RationalRect 0 0 0.5 0.4
+    --rect90 = customFloating $ W.RationalRect 0 0 0.4 1
     roxterm = "roxterm --separate --profile=scratchpad -T "
-    --terminator = "terminator -T "
     xterm ="xterm -xrm \"xterm*allowTitleOps: false\" -T "
     role = stringProperty "WM_WINDOW_ROLE"
 
 scratchpadBinds = [
-         ("M-c" , namedScratchpadAction scratchpads "cmus")
-        --, ("M-z" , namedScratchpadAction scratchpads "notepad")
-        , ("<F2>" , namedScratchpadAction scratchpads "notepad")
+          ("M-c"  , namedScratchpadAction scratchpads "cmus")
         , ("<F1>" , namedScratchpadAction scratchpads "floatterm")
-        , ("M-[", withFocused (keysResizeWindow (0,60) (1,0)))
-        , ("M-]", withFocused (keysResizeWindow (0,-60) (1,0)))
+        , ("<F2>" , namedScratchpadAction scratchpads "notepad")
+        --, ("<F3>" , namedScratchpadAction scratchpads "floatterm90")
+        , ("M-["  , withFocused (keysResizeWindow (0,60) (1,0)))
+        , ("M-]"  , withFocused (keysResizeWindow (0,-60) (1,0)))
+        , ("M-S-]"  , withFocused (keysResizeWindow (272,0) (0,0)))
+        , ("M-S-["  , withFocused (keysResizeWindow (-270,0) (0,0)))
+        , ("M-<Up>"  , withFocused (keysMoveWindow (0,-100)))
+        , ("M-<Down>"  , withFocused (keysMoveWindow (0,100)))
+        , ("M-<Right>"  , withFocused (keysMoveWindow (100,0)))
+        , ("M-<Left>"  , withFocused (keysMoveWindow (-100,0)))
         ]
 
 -- }}}
@@ -428,11 +435,24 @@ mykeysP =
         , ("M-<Delete>"   , spawn "~/.lockscreen.sh")
         , ("M-S-q" , spawn $ "pkill dzen2; sleep 1; " ++ myrestart )
         , ("M-S-<Delete>" , io exitSuccess)
-        , ("<F8>" , spawn "~/bin/autoclick.sh" )
+        --, ("<F8>" , spawn "~/bin/autoclick.sh" )
+        --, ("<F9>" , spawn "pkill clicker.sh" )
         ] ++
         scratchpadBinds
         where
           gvimcmd = "gvim --servername GVIM --remote-send '<Esc>:tabnew<CR>'; if [[ $? == 1 ]]; then gvim --servername GVIM; fi"
+
+button8 :: Button
+button8 = 8
+button9 :: Button
+button9 = 9
+
+mymousebuttons =
+        [
+        --  ((noModMask,button9) , const $ spawn "~/bin/autoclick.sh" )
+        --, ((noModMask,button8) , const $ spawn "~/bin/autoclick.sh" )
+        ]
+
 
 notKeysP =
     [
@@ -442,4 +462,3 @@ notKeysP =
 -- }}}
 
 -- }}}
-
