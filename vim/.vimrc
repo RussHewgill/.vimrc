@@ -31,6 +31,7 @@ Plugin 'coot/cmdalias_vim'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'rhysd/clever-f.vim'
 Plugin 'taglist.vim'
+Plugin 'wting/rust.vim'
 
 "Plugin 'tpope/vim-fireplace'
 "Plugin 'kien/ctrlp.vim'
@@ -264,9 +265,9 @@ map <Leader><Leader>d "+d
 map <Leader><Leader>p "+p
 
 "Tabularize
-noremap <Leader><Tab> :Tabularize /\s\zs=\s.*/<cr>
+noremap ,<Tab> :Tabularize /\s\zs=\s.*/<cr>
 noremap <Leader><Leader><Tab> :Tabularize /
-noremap ,<tab> :Tabu<up><cr>
+noremap <leader><tab> :Tabu<up><cr>
 
 noremap ; :
 noremap <C-f> ;
@@ -330,12 +331,11 @@ let g:syntastic_coffee_checkers          = [ 'coffeelint' ]
 let g:syntastic_haskell_checkers         = [ 'hdevtools', 'hlint' ]
 
 let g:syntastic_coffee_coffeelint_args = "--csv --file /usr/lib/node_modules/coffeelint/coffeelint.json"
-let g:syntastic_haskell_ghc_mod_args   = "-g -fno-warn-missing-signatures"
 let g:syntastic_cppcheck_config_file   = "/usr/shar/cppcheck/cfg/std.cfg"
 let g:syntastic_haskell_hlint_args     = " --hint=Custom"
 let g:syntastic_haskell_hdevtools_args = '-g -Wall -g -fno-warn-unused-binds
-    \ -g -fno-warn-unused-imports -g -fno-warn-missing-signatures -g -fno-hs-main
-    \ -g -fno-warn-deprecations'
+    \ -g -fno-warn-unused-imports -g -fno-warn-missing-signatures
+    \ -g -fno-warn-deprecations -g -fno-warn-unused-binds -g -fno-warn-unused-matches'
 "let g:syntastic_asm_dialect = 'nasm'
 
 let g:syntastic_python_pylint_rcfile = '/home/russ/.pylintrc'
@@ -435,8 +435,8 @@ let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_confirm_extra_conf                            = 0
 let g:ycm_complete_in_comments                          = 1
 let g:ycm_add_preview_to_completeopt                    = 0
-let g:ycm_semantic_triggers                             = { 'haskell' : ['.'],
-                            \ 'bash' : ['#!'], 'python' : [] }
+let g:ycm_semantic_triggers                             = { 'haskell': ['.'],
+                            \ 'bash': ['#!'], 'python': [], 'rust': ['.']}
 
 nnoremap <leader>h :YcmCompleter GoTo<CR>
 au! BufRead,BufNewFile *.hs setlocal omnifunc=necoghc#omnifunc
@@ -588,7 +588,9 @@ au BufRead,BufNewFile *.py2 let g:syntastic_python_checkers = ['python', 'pyflak
 
 au BufRead,BufNewFile *.x set filetype=alex
 
-au BufRead,BufNewFile *.clj,*.cl,*.lisp set omnifunc=syntaxcomplete#Complete
+au BufRead,BufNewFile *.rs,*.clj,*.cl,*.lisp set omnifunc=syntaxcomplete#Complete
+
+au BufRead,BufNewFile *.cl,*.lisp let b:AutoPairs = {'(':')', '[':']', '{':'}','"':'"', '`':'`'}
 
 " change this if i ever need to use perl
 " Welp, perl

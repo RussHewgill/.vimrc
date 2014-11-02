@@ -404,7 +404,7 @@ mykeysP =
         --, ("M-t" , spawn "terminator")
             --TODO: stop from launching more windows
         , ("M-g" , singlespawn "Firefox" "firefox")
-        --, ("M-g" , spawn "firefox-beta-bin" )
+        --, ("M-g" , singlespawn "Firefox" "firefox-beta-bin")
         , ("M-e" , spawn "xterm -e ranger" )
         , ("M-s" , spawn gvimcmd )
 
