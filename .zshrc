@@ -169,10 +169,15 @@ export JAVA_HOME=
 # Aliases {{{
 
 source ~/.config/.aliases
+source ~/.config/zextras
 
 function mcd () {
     mkdir -p "$1"
     cd "$1"
+}
+
+function qg () {
+    grep -ir "$1" *
 }
 
 function saydone() {

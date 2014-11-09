@@ -151,7 +151,7 @@ mymanagehook = composeAll . concat $
     , [className =? "Clementine"                            --> doShift (wss!!2) ]
     , [className =? "Gvim"                                  --> doF W.swapMaster ]
     , [className =? "Gmrun"                                 --> doSideFloat CW   ]
-    , [title =? "Yakuake"                                   --> doFloat          ]
+    , [title =? "floatme"                                   --> doFloat          ]
     , [title =? "Terminator Preferences"                    --> doFloat          ]
     , [className =? "Xmessage"                              --> doFloat          ]
     , [className =? "Gsimplecal"            --> placeHook (withGaps (0,0,30,0) $ underMouse (0,0)) ]
@@ -435,8 +435,8 @@ mykeysP =
         , ("M-<Delete>"   , spawn "~/.lockscreen.sh")
         , ("M-S-q" , spawn $ "pkill dzen2; sleep 1; " ++ myrestart )
         , ("M-S-<Delete>" , io exitSuccess)
-        --, ("<F8>" , spawn "~/bin/autoclick.sh" )
-        --, ("<F9>" , spawn "pkill clicker.sh" )
+        , ("<F8>" , spawn "~/bin/autoclick.sh" )
+        , ("<F9>" , spawn "pkill clicker.sh" )
         ] ++
         scratchpadBinds
         where

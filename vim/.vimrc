@@ -32,6 +32,7 @@ Plugin 'jiangmiao/auto-pairs'
 Plugin 'rhysd/clever-f.vim'
 Plugin 'taglist.vim'
 Plugin 'wting/rust.vim'
+Plugin 'kovisoft/slimv'
 
 "Plugin 'tpope/vim-fireplace'
 "Plugin 'kien/ctrlp.vim'
@@ -233,9 +234,13 @@ function! StripWS()
 endfunction
 
 noremap ,. @:
+noremap <leader>; A;<esc>
 
 cnoremap <C-p> <up>
 cnoremap <C-n> <down>
+
+noremap zk zt
+noremap zj zb
 
 nnoremap <Plug>Spacesurround :call Spacesurround()<cr>
 nmap ,<space> <Plug>Spacesurround
@@ -325,7 +330,7 @@ noremap ]e :lnext<cr>
 
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_c_checkers               = [ 'gcc', 'clang_tidy' ]
-let g:syntastic_python_checkers          = [ 'python', 'pep8']
+let g:syntastic_python_checkers          = [ 'python' ]
 let g:syntastic_javascript_checkers      = [ 'jshint' ]
 let g:syntastic_coffee_checkers          = [ 'coffeelint' ]
 let g:syntastic_haskell_checkers         = [ 'hdevtools', 'hlint' ]
@@ -381,6 +386,17 @@ endfunction
 
 "}}}
 
+" Shimv
+" {{{
+
+set runtimepath+=~/code/vim/shimv
+
+"au filetype haskell noremap ,d :call SendHaskellLet()<cr>
+"au filetype haskell noremap ,r :call SendHaskellPlain()<cr>
+"au filetype haskell noremap ,l :call SendHaskellLoad()<cr>
+
+" }}}
+
 " Gundo
 "{{{
 
@@ -420,6 +436,7 @@ let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 " {{{
 
 let g:AutoPairsCenterLine = 0
+"let g:AutoPairsMapSpace = 0
 
 " }}}
 
@@ -436,7 +453,7 @@ let g:ycm_confirm_extra_conf                            = 0
 let g:ycm_complete_in_comments                          = 1
 let g:ycm_add_preview_to_completeopt                    = 0
 let g:ycm_semantic_triggers                             = { 'haskell': ['.'],
-                            \ 'bash': ['#!'], 'python': [], 'rust': ['.']}
+                            \ 'bash': ['#!'], 'python': ['.'], 'rust': ['.']}
 
 nnoremap <leader>h :YcmCompleter GoTo<CR>
 au! BufRead,BufNewFile *.hs setlocal omnifunc=necoghc#omnifunc
@@ -447,7 +464,12 @@ au! BufRead,BufNewFile *.hs setlocal omnifunc=necoghc#omnifunc
 " Slimv
 "{{{
 
-"let g:slimv_swank_cmd = '! xterm -e sbcl --load /home/russ/.vim/bundle/slimv.vim/slime/start-swank.lisp &'
+
+let g:slimv_swank_cmd = '! screen -dmS sbcl /usr/bin/sbcl --load /home/russ/.vim/bundle/slimv/slime/start-swank.lisp &'
+
+let g:paredit_mode = 0
+let g:lisp_rainbow = 1
+let g:slimv_menu = 0
 
 "}}}
 
@@ -561,7 +583,7 @@ au FocusLost * :wa
 " Readonly file saving
 command! W w !sudo tee % > /dev/null
 
-"" Return to last edit position when opening files (You want this!)
+"" Return to last edit position when opening files
 
 if has("autocmd")
     au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
@@ -578,22 +600,17 @@ augroup end
 " Filetype specific settings
 " {{{
 
-"au Filetype haskell match HaskBrackets /\[\]/
-
-"python
-
 au BufRead,BufNewFile *.py2 set filetype=python
 au BufRead,BufNewFile *.py2 let g:syntastic_python_python_exec = '/usr/bin/python2'
-au BufRead,BufNewFile *.py2 let g:syntastic_python_checkers = ['python', 'pyflakes']
 
 au BufRead,BufNewFile *.x set filetype=alex
 
-au BufRead,BufNewFile *.rs,*.clj,*.cl,*.lisp set omnifunc=syntaxcomplete#Complete
+"au BufRead,BufNewFile *.rs,*.clj,*.cl,*.lisp,*.cl set omnifunc=syntaxcomplete#Complete
+au filetype rust,clojure,lisp,cs set omnifunc=syntaxcomplete#Complete
 
-au BufRead,BufNewFile *.cl,*.lisp let b:AutoPairs = {'(':')', '[':']', '{':'}','"':'"', '`':'`'}
-
-" change this if i ever need to use perl
-" Welp, perl
-"au BufNewFile,BufRead *.pl set filetype=prolog
+au Filetype lisp let b:AutoPairs = {'(':')', '[':']', '{':'}','"':'"', '`':'`'}
+au Filetype lisp let b:AutoPairsMapCR = 0
+au Filetype lisp set lisp
+"au Filetype lisp noremap ,d "ryip:call system("screen -S wat -p wat -X stuff '" . @r . "'")<cr>
 
 " }}}
