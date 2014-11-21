@@ -13,7 +13,6 @@ Plugin 'scrooloose/nerdcommenter'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-surround'
 Plugin 'godlygeek/tabular'
-Plugin 'Lokaltog/vim-easymotion'
 Plugin 'eagletmt/neco-ghc'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
@@ -28,12 +27,14 @@ Plugin 'xolox/vim-notes'
 Plugin 'xolox/vim-misc'
 Plugin 'coot/CRDispatcher'
 Plugin 'coot/cmdalias_vim'
-Plugin 'jiangmiao/auto-pairs'
 Plugin 'rhysd/clever-f.vim'
 Plugin 'taglist.vim'
 Plugin 'wting/rust.vim'
 Plugin 'kovisoft/slimv'
+Plugin 'https://github.com/wincent/Command-T'
+Plugin 'jiangmiao/auto-pairs'
 
+"Plugin 'Lokaltog/vim-easymotion'
 "Plugin 'tpope/vim-fireplace'
 "Plugin 'kien/ctrlp.vim'
 "Plugin 'tmhedberg/SimpylFold'
@@ -157,7 +158,7 @@ set background=light
 
 if has("gui_running")
     set t_Co=256
-    "let g:badwolf_darkgutter = 1
+    let g:badwolf_darkgutter = 1
     colorscheme badwolf
     "let g:solarized_termcolors=256
     "colorscheme solarized
@@ -414,6 +415,22 @@ runtime macros/matchit.vim
 
 " }}}
 
+" CommandT
+" {{{
+
+noremap <leader>f :CommandT<cr>
+noremap <leader>m :CommandTTag<cr>
+noremap <leader>b :CommandTBuffer<cr>
+
+let g:CommandTFileScanner        = 'find'
+let g:CommandTMatchWindowReverse = 1
+let g:CommandTBackspaceMap       = '<BS>'
+let g:CommandTAcceptSelectionMap = '<tab>'
+let g:CommandTCursorLeftMap      = '<C-b>'
+let g:CommandTCursorRightMap     = '<C-f>'
+
+" }}}
+
 " CtrlP
 " {{{
 
@@ -429,6 +446,16 @@ let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
     "let g:ctrlp_user_command = 'ag %s --ignore ".cache" --ignore "tmp" --ignore "*.swp" --ignore "*.so" --hidden --nocolor -l -g ""'
     "let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
 "endif
+
+" }}}
+
+" Paredit
+" {{{
+ 
+"inoremap <M-e> <esc>:<C-U>call PareditMoveLeft()<cr>
+"call RepeatableNNoRemap(<M-e>
+
+"(+ (* 2 2) 3 4)
 
 " }}}
 
@@ -463,7 +490,6 @@ au! BufRead,BufNewFile *.hs setlocal omnifunc=necoghc#omnifunc
 
 " Slimv
 "{{{
-
 
 let g:slimv_swank_cmd = '! screen -dmS sbcl /usr/bin/sbcl --load /home/russ/.vim/bundle/slimv/slime/start-swank.lisp &'
 
@@ -539,11 +565,9 @@ endfunction
 
 call airline#parts#define_function('syntaxmode', 'Getsyntaxmode')
 
+let g:airline_section_z = airline#section#create(['syntaxmode',' ','windowswap', '%3p%%',' ', 'linenr', ':%3c '])
 
-function! HaskAirline()
-    let g:airline_section_z = airline#section#create(['syntaxmode',' ','windowswap', '%3p%%',' ', 'linenr', ':%3c '])
-endfunction
-autocmd BufRead,BufNewFile *.hs call HaskAirline()
+"autocmd BufRead,BufNewFile *.hs call HaskAirline()
 
 "}}}
 
@@ -600,13 +624,15 @@ augroup end
 " Filetype specific settings
 " {{{
 
+set omnifunc=syntaxcomplete#Complete
+
 au BufRead,BufNewFile *.py2 set filetype=python
 au BufRead,BufNewFile *.py2 let g:syntastic_python_python_exec = '/usr/bin/python2'
 
 au BufRead,BufNewFile *.x set filetype=alex
 
 "au BufRead,BufNewFile *.rs,*.clj,*.cl,*.lisp,*.cl set omnifunc=syntaxcomplete#Complete
-au filetype rust,clojure,lisp,cs set omnifunc=syntaxcomplete#Complete
+au filetype rust,clojure,lisp,cs,systemd set omnifunc=syntaxcomplete#Complete
 
 au Filetype lisp let b:AutoPairs = {'(':')', '[':']', '{':'}','"':'"', '`':'`'}
 au Filetype lisp let b:AutoPairsMapCR = 0

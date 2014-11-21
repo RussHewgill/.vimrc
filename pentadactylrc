@@ -95,6 +95,9 @@ com dlyt execute "silent !(vlc '" + window.content.location.href + "' &)"
 
 com -nargs=1 -complete help th tab :help <args>
 
+map -b <space> ]]
+map -b <BS> H
+
 "Find
 set hlfind
 set findflags=''

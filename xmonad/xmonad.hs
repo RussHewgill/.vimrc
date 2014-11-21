@@ -1,5 +1,5 @@
 -- vim: set foldlevel=0 :
--- Imports {{{
+-- {{{ Imports
 
 import XMonad
 import XMonad.Actions.CycleWS
@@ -35,11 +35,11 @@ import Data.Maybe          (isNothing)
 
 -- }}}
 
--- Main {{{
+-- {{{ Main
 main = do
     spawn "~/bin/wp"
-    spawn "unclutter -grab"
-    spawn "wmname LG3D"
+    --spawn "~/bin/startunclutter.sh"
+    --spawn "wmname LG3D"
 
     ldzenproc <- spawnPipe mydzenl
     spawn mydzenclockl
@@ -48,14 +48,14 @@ main = do
     numscreens <- countScreens
     if numscreens == (1 :: Integer)
         then xmonad $ runbars laptopconf ldzenproc Nothing
-        else do
+    else do
         rdzenproc <- spawnPipe mydzenr
         spawn mydzenclockr
         xmonad . ewmh $ runbars dualheadconf ldzenproc (Just rdzenproc)
 
 -- }}}
 
--- Main Config {{{
+-- {{{ Main Config
 
 conf = withNavigation2DConfig defaultNavigation2DConfig
         $ defaultConfig
@@ -78,7 +78,7 @@ laptopconf = conf `additionalKeysP` mykeysonehead `removeKeysP` notKeysP
 
 -- }}}
 
--- PPlogger {{{
+-- {{{ PPlogger
 
 --Runs 2 statusbars for 2+ monitors, 1 otherwise
 runbars :: XConfig l -> Handle -> Maybe Handle -> XConfig l
@@ -119,16 +119,7 @@ myPPlog handle _ = dynamicLogWithPP . namedScratchpadFilterOutWorkspacePP $ dzen
 
 -- }}}
 
--- Themes {{{
--- light
-{-bg        = "#D8D8D8"-}
-{-fg        = "#000000"-}
-{-cwsbg     = "#0088CC"-}
-{-cwsfg     = "171616"-}
-{-vwsbg     = "#A3BeCC"-}
-{-wssepbg   = "#A8A8A8"-}
-{-emptywsbg = "#c4c4c4"-}
-
+-- {{{ Themes
 -- i3wm clone
 bg        = "#171616"
 fg        = "#dddddd"
@@ -141,7 +132,7 @@ emptywsbg = "#333333"
 emptywsfg = "#888888"
 -- }}}
 
--- Managehook {{{
+-- {{{ Managehook
 
 mymanagehook = composeAll . concat $
     [ [className =? "Firefox"  <&&> resource =? "Navigator" --> doShift (head wss) ]
@@ -182,7 +173,7 @@ avoidMaster = W.modify' $ \c -> case c of
 
 -- }}}
 
--- Layouthook {{{
+-- {{{ Layouthook
 
 mylayoutHook =  smartBorders
                 . avoidStruts
@@ -210,7 +201,7 @@ columns = Tall { tallNMaster = 1, tallRatio=1%2, tallRatioIncrement=3%100 }
 
 -- }}}
 
--- workspaces {{{
+-- {{{ workspaces
 
 wss :: [WorkspaceId]
 wss = ["1:Web_1", "2:Text_2", "3:Tunes_0", "4:Other_0", "5:Other_0", "6_0", "7_0", "8_0", "9_0", "NSP_0"]
@@ -226,7 +217,7 @@ mywsso = filter ((=='0') . last) wss
 
 -- }}}
 
--- dzen/conky {{{
+-- {{{ dzen/conky
 
 -- most of these settings are specific to my monitor setup
 -- 1920x1080 laptop left, larger 1680x1050 right
@@ -245,7 +236,7 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-160-*-*-*-*-*-*' "
 
 -- }}}
 
--- Scratchpad {{{
+-- {{{ Scratchpad
 
 scratchpads = [
     NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
@@ -278,7 +269,7 @@ scratchpadBinds = [
 
 -- }}}
 
--- Misc Functions and Vars {{{
+-- {{{ Misc Functions and Vars
 
 myrestart = "xmonad --restart"
 
@@ -317,9 +308,9 @@ repeatX f n = f >> repeatX f (n-1)
 
 -- }}}
 
--- keybinds {{{
+-- {{{ keybinds
 
--- keylist {{{
+-- {{{ keylist
 
 --messy way to see if a key is available to use for something
 isbound x = if ("M-" ++ [x]) `elem` availablebinds then "Unbound" else "Bound"
@@ -331,7 +322,7 @@ allbinds = (++) <$> mods <*> keyslist
 keyslist = fmap (:[]) $ ['1'..'9'] ++ ['a'..'z']
 mods     = ["M-", "M-S-", "M-C-"]
 
--- Others {{{
+-- {{{ Others
 
 defaultbinds = ["M-S-<Return>", "M-<Space>", "M-S-<Space>", "M-p", "M-S-p", "M-S-c", "M-n", "Mod-<Tab>", "M-S-<Tab>", "M-j", "M-k", "M-m", "M-<Return>", "M-S-j", "M-S-k", "M-h", "M-l", "M-t", "M-comma", "M-period", "M-S-q", "M-q", "M-w", "M-e", "M-r"] ++ fmap (("M-"++) . (:[])) ['1'..'9']
 
@@ -341,7 +332,7 @@ others = ["<Backspace>", "<Tab>", "<Return>", "<Pause>", "<Scroll_lock>", "<Sys_
 
 -- }}}
 
--- Dual+ monitor {{{
+-- {{{ Dual+ monitor
 
 mykeysdualhead = mykeysP ++ [
           ("M-i" , nextScreen)
@@ -366,7 +357,7 @@ mykeysdualhead = mykeysP ++ [
 
 -- }}}
 
--- Single monitor {{{
+-- {{{ Single monitor
 
 mykeysonehead = mykeysP ++
             [ (otherModMasks ++ "M-" ++ [key], action tag)
@@ -376,7 +367,7 @@ mykeysonehead = mykeysP ++
 
 -- }}}
 
--- standard keys {{{
+-- {{{ standard keys
 
 
 --required for dzen clickables: M-n,M-m,M-S-p, and M-# keys above
@@ -407,6 +398,8 @@ mykeysP =
         --, ("M-g" , singlespawn "Firefox" "firefox-beta-bin")
         , ("M-e" , spawn "xterm -e ranger" )
         , ("M-s" , spawn gvimcmd )
+        , ("M-S-s" , spawn "emacs" )
+        , ("M-M1-S-s" , spawn "emacs --debug-init" )
 
             -- Window Management
         , ("M-h" , windowGo L False)
@@ -435,8 +428,8 @@ mykeysP =
         , ("M-<Delete>"   , spawn "~/.lockscreen.sh")
         , ("M-S-q" , spawn $ "pkill dzen2; sleep 1; " ++ myrestart )
         , ("M-S-<Delete>" , io exitSuccess)
-        , ("<F8>" , spawn "~/bin/autoclick.sh" )
-        , ("<F9>" , spawn "pkill clicker.sh" )
+        --, ("<F8>" , spawn "~/bin/autoclick.sh" )
+        --, ("<F9>" , spawn "pkill clicker.sh" )
         ] ++
         scratchpadBinds
         where

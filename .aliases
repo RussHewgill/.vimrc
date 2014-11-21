@@ -1,3 +1,4 @@
+# -*- mode: sh -*-
 #vim: filetype=bash
 alias sudoedit='sudo -E vim'
 alias bdf='btrfs filesystem df ~/files'
@@ -20,6 +21,7 @@ alias ktray='pkill nm-applet & pkill trayer'
 alias pse='ps aux | grep -i'
 alias vbm='VBoxManage'
 alias time='\time -p '
+alias timer="\time -p -f '%es %M KB'"
 alias ipy='ipython3'
 alias pti='ptipython --vi'
 alias py='python3 -c'

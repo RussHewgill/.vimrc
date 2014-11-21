@@ -176,6 +176,10 @@ function mcd () {
     cd "$1"
 }
 
+function qf () {
+    find . -iname "$@"
+}
+
 function qg () {
     grep -ir "$1" *
 }
@@ -217,3 +221,9 @@ function pypass () {
 }
 
 # }}}
+
+PATH="/home/russ/perl5/bin${PATH+:}${PATH}"; export PATH;
+PERL5LIB="/home/russ/perl5/lib/perl5${PERL5LIB+:}${PERL5LIB}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/home/russ/perl5${PERL_LOCAL_LIB_ROOT+:}${PERL_LOCAL_LIB_ROOT}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/home/russ/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/home/russ/perl5"; export PERL_MM_OPT;
