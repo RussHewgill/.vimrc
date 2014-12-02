@@ -35,7 +35,7 @@ map -modes=n,v -b o O
 map -modes=n,v -b O o
 
 map -modes=n,v -b p P
-map -modes=n,v -b P p
+map -b P :tabopen w <S-Insert><cr>
 
 "Tabs
 map -b -modes=n,v w :b<space>
@@ -51,8 +51,10 @@ map -modes=n,v -b u <C-u>
 "Hints
 set hintkeys=fjdkslaghrueiwoncm
 
-map -modes=n,v -b f F
-map -modes=n,v -b F f
+"map -modes=n,v -b f F
+"map -modes=n,v -b F f
+map -modes=n,v -b f <nop>
+map -modes=n,v -b F <nop>
 map -modes=n,v -b af g;b
 
 "Move to First/Last tab
@@ -77,6 +79,9 @@ map <C-pagedown> <C-A-S-k>
 "map -b zi +
 "map -b zo -
 
+" Work around vimfx hints not playing nice with pentadactyl's escape
+map -b <Esc> <Esc><C-S-'>
+
 "NoScript
 map -b <A-s> :set nss!=<A-Tab>
 map -b <C-A-s> :set nst!=<A-Tab>
@@ -89,6 +94,7 @@ map <C-S-j> <pass>
 "Open in Chromium
 map -b -modes=n,v gv :dlyt<cr>
 map -b -modes=n,v gc :chro<cr>
+map -b -modes=n,v gn :nextempty<cr>
 
 com chro execute "silent !(chromium '" + window.content.location.href + "' &)"
 com dlyt execute "silent !(vlc '" + window.content.location.href + "' &)"
@@ -115,3 +121,4 @@ style -name tabbrowser-height-fix chrome://* <<EOM
     max-height:       unset !important;
 }
 EOM
+" vim: set ft=vim :

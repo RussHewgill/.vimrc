@@ -32,13 +32,17 @@ Plugin 'taglist.vim'
 Plugin 'wting/rust.vim'
 Plugin 'kovisoft/slimv'
 Plugin 'https://github.com/wincent/Command-T'
-Plugin 'jiangmiao/auto-pairs'
-
+Plugin 'guns/vim-sexp'
+"Plugin 'jiangmiao/auto-pairs'
+"Plugin 'https://github.com/vim-scripts/paredit.vim'
+Plugin 'Shougo/vimproc.vim'
+Plugin 'eagletmt/ghcmod-vim'
+"Plugin 'raichoo/haskell-vim'
+ 
 "Plugin 'Lokaltog/vim-easymotion'
 "Plugin 'tpope/vim-fireplace'
 "Plugin 'kien/ctrlp.vim'
 "Plugin 'tmhedberg/SimpylFold'
-"Plugin 'raichoo/haskell-vim'
 "Plugin 'kchmck/vim-coffee-script'
 "Plugin 'davidhalter/jedi-vim'
 "Plugin 'Shougo/neocomplcache.vim'
@@ -113,7 +117,7 @@ set t_vb=
 set wrap
 set textwidth=79
 set formatoptions=qrn1
-set colorcolumn=83
+"set colorcolumn=83
 
 set modeline
 
@@ -137,8 +141,8 @@ set incsearch
 set showmatch
 set hlsearch
 
-nnoremap <silent> ,, :let @/=""<cr>
-vnoremap <silent> ,, :let @/=""<cr>
+nnoremap <silent> ,, :let @/=""<cr>:GhcModTypeClear<cr>
+vnoremap <silent> ,, :let @/=""<cr>:GhcModTypeClear<cr>
 
 nnoremap <tab> %
 vnoremap <tab> %
@@ -165,7 +169,7 @@ if has("gui_running")
 
     set guicursor+=a:blinkwait0
 
-    set guifont=Inconsolata\ Medium\ 12
+    set guifont=Inconsolata-g\ Medium\ 12
     set guioptions-=T
     set guioptions-=e
     set guioptions+=c
@@ -209,6 +213,8 @@ inoremap jk <Esc>
 inoremap JK <Esc>
 inoremap jj <Esc>i
 inoremap jl <Esc>la
+
+noremap Y y$
 
 noremap <leader>tr :w<CR>:so %<cr>
 noremap <leader>ti :w<CR>:so %<cr>:PluginInstall<cr>
@@ -321,7 +327,7 @@ noremap Q @@
 " Syntastic
 "{{{
 
-noremap <leader>e :call ToggleErrors()<cr>
+"noremap <leader>e :call ToggleErrors()<cr>
 noremap <leader>ll :call Togglehlint()<cr>
 noremap <leader>le :call SyntaxToggleModeAL()<cr>
 noremap <leader>lc :SyntasticReset<cr>
@@ -398,6 +404,56 @@ set runtimepath+=~/code/vim/shimv
 
 " }}}
 
+" GHC mod
+" {{{
+
+noremap <leader>i :GhcModType<cr>
+
+" }}}
+
+" NerdCommenter
+" {{{
+
+let g:NERDCustomDelimiters = {
+    \ 'haskell': { 'left': '-- ', 'leftAlt': '{- ', 'rightAlt': ' -}'},
+    \ 'lisp': { 'left': ';; '}
+    \ }
+
+map <leader>cc <plug>NERDCommenterAlignBoth
+map <leader>cb <plug>NERDCommenterComment
+
+map <leader>cp vip ci
+
+" }}}
+
+" Vim Sexp
+" {{{
+
+let g:sexp_filetypes = 'clojure,scheme,lisp,timl,*'
+map <M-s> <plug>(sexp_splice_list)
+map <M-r> <plug>(sexp_raise_list)
+
+" Slurp
+" forwards
+map <M-e> mz<M-S-l>`zl
+imap <M-e> <esc>mz<M-S-l>`za
+map <C-S-0> mz<M-S-l>`al
+imap <C-S-0> <esc>mz<M-S-l>`za
+" backwards
+map <C-S-9> mz<M-S-h>`al
+imap <C-S-9> <esc>mz<M-S-h>`za
+
+" Barf
+" forwards
+map <M-C-e> mz<M-S-k>`zl
+imap <M-C-e> <esc>mz<M-S-k>`za
+map <C-S-0> mz<M-S-k>`zl
+imap <C-S-0> <esc>mz<M-S-k>`za
+" Backwards
+map <C-S-9> mz<M-S-k>`zl
+
+" }}}
+
 " Gundo
 "{{{
 
@@ -451,11 +507,8 @@ let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
 
 " Paredit
 " {{{
- 
-"inoremap <M-e> <esc>:<C-U>call PareditMoveLeft()<cr>
-"call RepeatableNNoRemap(<M-e>
 
-"(+ (* 2 2) 3 4)
+"au FileType vim call PareditInitBuffer ()
 
 " }}}
 
@@ -483,6 +536,7 @@ let g:ycm_semantic_triggers                             = { 'haskell': ['.'],
                             \ 'bash': ['#!'], 'python': ['.'], 'rust': ['.']}
 
 nnoremap <leader>h :YcmCompleter GoTo<CR>
+let g:necoghc_enable_detailed_browse = 1
 au! BufRead,BufNewFile *.hs setlocal omnifunc=necoghc#omnifunc
 
 
@@ -493,7 +547,7 @@ au! BufRead,BufNewFile *.hs setlocal omnifunc=necoghc#omnifunc
 
 let g:slimv_swank_cmd = '! screen -dmS sbcl /usr/bin/sbcl --load /home/russ/.vim/bundle/slimv/slime/start-swank.lisp &'
 
-let g:paredit_mode = 0
+"let g:paredit_mode = 0
 let g:lisp_rainbow = 1
 let g:slimv_menu = 0
 
@@ -526,11 +580,11 @@ let g:haskell_indent_in    = 4
 
 "let g:EasyMotion_do_mapping = 0
 
-map <leader>g <Plug>(easymotion-bd-w)
-map <leader>s <Plug>(easymotion-s)
+"map <leader>g <Plug>(easymotion-bd-w)
+"map <leader>s <Plug>(easymotion-s)
 
-let g:EasyMotion_smartcase = 1
-hi EasyMotionShade guifg=#998f84
+"let g:EasyMotion_smartcase = 1
+"hi EasyMotionShade guifg=#998f84
 
 "}}}
 
@@ -613,11 +667,11 @@ if has("autocmd")
     au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
 
-augroup BgHighlight
-    au!
-    au FocusGained * set colorcolumn=81
-    au FocusLost * set colorcolumn=0
-augroup end
+"augroup BgHighlight
+    "au!
+    "au FocusGained * set colorcolumn=81
+    "au FocusLost * set colorcolumn=0
+"augroup end
 
 "}}}
 
@@ -632,11 +686,11 @@ au BufRead,BufNewFile *.py2 let g:syntastic_python_python_exec = '/usr/bin/pytho
 au BufRead,BufNewFile *.x set filetype=alex
 
 "au BufRead,BufNewFile *.rs,*.clj,*.cl,*.lisp,*.cl set omnifunc=syntaxcomplete#Complete
-au filetype rust,clojure,lisp,cs,systemd set omnifunc=syntaxcomplete#Complete
+"au FileType rust,clojure,lisp,cs,systemd set omnifunc=syntaxcomplete#Complete
 
-au Filetype lisp let b:AutoPairs = {'(':')', '[':']', '{':'}','"':'"', '`':'`'}
-au Filetype lisp let b:AutoPairsMapCR = 0
-au Filetype lisp set lisp
-"au Filetype lisp noremap ,d "ryip:call system("screen -S wat -p wat -X stuff '" . @r . "'")<cr>
+au FileType lisp let b:AutoPairs = {'(':')', '[':']', '{':'}','"':'"', '`':'`'}
+au FileType lisp let b:AutoPairsMapCR = 0
+au FileType lisp set lisp
+"au FileType lisp noremap ,d "ryip:call system("screen -S wat -p wat -X stuff '" . @r . "'")<cr>
 
 " }}}

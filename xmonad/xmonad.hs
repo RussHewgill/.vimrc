@@ -30,7 +30,7 @@ import System.Exit         (exitSuccess)
 import Data.List           (isInfixOf, nub)
 import Data.Ratio          ((%))
 import Control.Applicative ((<$>),(<*>))
-import Control.Monad       (when)
+import Control.Monad       (when, unless)
 import Data.Maybe          (isNothing)
 
 -- }}}
@@ -217,7 +217,8 @@ mywsso = filter ((=='0') . last) wss
 
 -- }}}
 
--- {{{ dzen/conky
+-- {{{
+-- dzen/conky
 
 -- most of these settings are specific to my monitor setup
 -- 1920x1080 laptop left, larger 1680x1050 right
@@ -232,40 +233,43 @@ mydzenl   = "dzen2 -xs 1 -w 800 -ta l " ++ dzenfont ++ dzenOpts
 mydzenr   = "dzen2 -xs 2 -w 800 -ta l " ++ dzenfont ++ dzenOpts
 
 dzenOpts  = "-p -e '' -h 30 -y -1 -fg '" ++ fg ++ "' -bg '" ++ bg ++ "'"
-dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-160-*-*-*-*-*-*' "
+dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-140-*-*-*-*-*-*' "
 
 -- }}}
 
 -- {{{ Scratchpad
 
-scratchpads = [
-    NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
-  --, NS "floatterm90" (roxterm ++ "floatterm90") ( title =? "floatterm90") rect90
-  , NS "cmus" (xterm ++ "cmus -e ~/bin/cmus.sh") ( title =? "cmus") tunes
+scratchpads = 
+  [ NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
+  , NS "floattermleft" (roxterm ++ "floattermleft") ( title =? "floattermleft") rectleft
+  , NS "cmus" (xterm ++ "cmus -e ~/bin/cmus.sh") ( title =? "cmus") (tunes 0.5)
   , NS "notepad" "exec gvim --servername notepad -f --role notepad ~/Documents/notepad" ( role =? "notepad") rect
+  , NS "irssi" (roxtermscreen ++ "irssi -e ~/bin/irssi.sh") (title =? "irssi") (tunes 0.6)
   ]
-  where
-    tunes = customFloating $ W.RationalRect 0 0 1 0.5
-    rect = customFloating $ W.RationalRect 0 0 0.5 0.4
-    --rect90 = customFloating $ W.RationalRect 0 0 0.4 1
-    roxterm = "roxterm --separate --profile=scratchpad -T "
-    xterm ="xterm -xrm \"xterm*allowTitleOps: false\" -T "
-    role = stringProperty "WM_WINDOW_ROLE"
+  where tunes         = customFloating . W.RationalRect 0 0 1
+        rect          = customFloating $ W.RationalRect 0 0 0.5 0.55
+        rectleft      = customFloating $ W.RationalRect 0.5 0 0.5 0.55
+        roxterm       = "roxterm --separate --profile=scratchpad -T "
+        roxtermscreen = "roxterm --separate --profile=irc -T "
+        xterm         ="xterm -xrm \"xterm*allowTitleOps: false\" -T "
+        role          = stringProperty "WM_WINDOW_ROLE"
 
-scratchpadBinds = [
-          ("M-c"  , namedScratchpadAction scratchpads "cmus")
-        , ("<F1>" , namedScratchpadAction scratchpads "floatterm")
-        , ("<F2>" , namedScratchpadAction scratchpads "notepad")
-        --, ("<F3>" , namedScratchpadAction scratchpads "floatterm90")
-        , ("M-["  , withFocused (keysResizeWindow (0,60) (1,0)))
-        , ("M-]"  , withFocused (keysResizeWindow (0,-60) (1,0)))
-        , ("M-S-]"  , withFocused (keysResizeWindow (272,0) (0,0)))
-        , ("M-S-["  , withFocused (keysResizeWindow (-270,0) (0,0)))
-        , ("M-<Up>"  , withFocused (keysMoveWindow (0,-100)))
-        , ("M-<Down>"  , withFocused (keysMoveWindow (0,100)))
-        , ("M-<Right>"  , withFocused (keysMoveWindow (100,0)))
-        , ("M-<Left>"  , withFocused (keysMoveWindow (-100,0)))
-        ]
+scratchpadBinds =
+  [ ("M-c"  , namedScratchpadAction scratchpads "cmus")
+  , ("<F1>" , namedScratchpadAction scratchpads "floatterm")
+  , ("<F2>" , namedScratchpadAction scratchpads "notepad")
+  , ("<F3>" , namedScratchpadAction scratchpads "irssi")
+  -- , ("<Insert>" , namedScratchpadAction scratchpads "floattermleft")
+  , ("M-<F1>" , namedScratchpadAction scratchpads "floattermleft")
+  , ("M-]"  , withFocused (keysResizeWindow (0,60) (1,0)))
+  , ("M-["  , withFocused (keysResizeWindow (0,-60) (1,0)))
+  , ("M-S-]"  , withFocused (keysResizeWindow (272,0) (0,0)))
+  , ("M-S-["  , withFocused (keysResizeWindow (-270,0) (0,0)))
+  , ("M-<Up>"  , withFocused (keysMoveWindow (0,-100)))
+  , ("M-<Down>"  , withFocused (keysMoveWindow (0,100)))
+  , ("M-<Right>"  , withFocused (keysMoveWindow (100,0)))
+  , ("M-<Left>"  , withFocused (keysMoveWindow (-100,0)))
+  ]
 
 -- }}}
 
@@ -293,13 +297,20 @@ toggleOrViewNoSP = toggleOrDoSkip [scratchpadws] W.greedyView
 singlespawn prog command = allWithProperty (ClassName prog) >>=
                 \x -> when (null x) $ spawn command
 
--- if current WS is empty, spawn command, otherwise goto next empty
-nextEmpty :: String -> X ()
-nextEmpty command = do
+-- if current WS is empty, spawn command, otherwise goto next empty and spawn there
+nextEmptySpawn :: String -> X ()
+nextEmptySpawn command = do
     curws <- gets (W.peek . windowset)
     if isNothing curws
         then spawn command
         else moveTo Next EmptyWS >> spawn command
+
+-- if current WS is empty, do nothing, otherwise goto next empty
+nextEmpty :: X ()
+nextEmpty = do
+    curws <- gets (W.peek . windowset)
+    unless (isNothing curws)
+              $ moveTo Next EmptyWS
 
 -- there's probably a builtin for this
 repeatX :: X () -> Int -> X ()
@@ -424,12 +435,13 @@ mykeysP =
 
             -- lockscreen just picks a random wallpaper from a dual monitor
             -- folder and starts i3lock
-        , ("M-<Pause>" , spawn "~/.lockscreen.sh && systemctl suspend")
-        , ("M-<Delete>"   , spawn "~/.lockscreen.sh")
+        , ("M-<Pause>" , spawn "~/bin/lockscreen.sh && systemctl suspend")
+        , ("M-<Delete>"   , spawn "~/bin/lockscreen.sh")
         , ("M-S-q" , spawn $ "pkill dzen2; sleep 1; " ++ myrestart )
         , ("M-S-<Delete>" , io exitSuccess)
         --, ("<F8>" , spawn "~/bin/autoclick.sh" )
         --, ("<F9>" , spawn "pkill clicker.sh" )
+        , ("M-S-g" , nextEmpty)
         ] ++
         scratchpadBinds
         where

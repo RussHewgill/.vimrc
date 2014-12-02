@@ -7,7 +7,7 @@ if pidof cmus >/dev/null; then
   position=$(cmus-remote -Q | grep position | cut -d' ' -f2)
   out=$(echo 'scale=2; 30 - (30 * ' $position / $duration')' | bc -l)
   echo '^p(-2)^p(_TOP)^r(3x'$out')^p()^fg()'
-else
-  echo $nosong
+#else
+  #echo $nosong
 fi
 

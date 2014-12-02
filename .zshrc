@@ -176,6 +176,18 @@ function mcd () {
     cd "$1"
 }
 
+function man() {
+	env \
+		LESS_TERMCAP_mb=$(printf "\e[1;31m") \
+		LESS_TERMCAP_md=$(printf "\e[1;31m") \
+		LESS_TERMCAP_me=$(printf "\e[0m") \
+		LESS_TERMCAP_se=$(printf "\e[0m") \
+		LESS_TERMCAP_so=$(printf "\e[1;44;33m") \
+		LESS_TERMCAP_ue=$(printf "\e[0m") \
+		LESS_TERMCAP_us=$(printf "\e[1;32m") \
+        man "$@"
+}
+
 function qf () {
     find . -iname "$@"
 }
@@ -184,9 +196,19 @@ function qg () {
     grep -ir "$1" *
 }
 
-function saydone() {
+function blisp () {
+    out=$(echo "$1" | perl -pe 's/\.[^.]+$//')
+    buildapp --load "$1" --entry "$2" --output $out >/dev/null && echo "compiled to: $out"
+    # [[ $3 ]] && timer ./$out
+}
+
+function saydone () {
     sleep "$1"
     say "$2"
+}
+
+function ed () {
+    emacsclient "$@" &
 }
 
 function say () {
