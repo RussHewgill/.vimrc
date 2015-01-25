@@ -193,7 +193,7 @@ function qf () {
 }
 
 function qg () {
-    grep -ir "$1" *
+    grep "$1" *
 }
 
 function blisp () {

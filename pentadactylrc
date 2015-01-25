@@ -34,8 +34,8 @@ map -b <C-f> ;t
 map -modes=n,v -b o O
 map -modes=n,v -b O o
 
-map -modes=n,v -b p P
-map -b P :tabopen w <S-Insert><cr>
+"map -modes=n,v -b P P
+map -b p :tabopen w <S-Insert><cr>
 
 "Tabs
 map -b -modes=n,v w :b<space>
@@ -50,6 +50,8 @@ map -modes=n,v -b u <C-u>
 
 "Hints
 set hintkeys=fjdkslaghrueiwoncm
+
+map -b gs gf
 
 "map -modes=n,v -b f F
 "map -modes=n,v -b F f
@@ -74,7 +76,7 @@ map + <pass>
 map <pageup> -
 map <C-pageup> <C-A-S-i>
 map <pagedown> +
-map <C-pagedown> <C-A-S-k>
+map <C-pagedown> <C-A-S-n>
 
 "map -b zi +
 "map -b zo -

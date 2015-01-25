@@ -33,12 +33,12 @@ Plugin 'wting/rust.vim'
 Plugin 'kovisoft/slimv'
 Plugin 'https://github.com/wincent/Command-T'
 Plugin 'guns/vim-sexp'
-"Plugin 'jiangmiao/auto-pairs'
+Plugin 'jiangmiao/auto-pairs'
 "Plugin 'https://github.com/vim-scripts/paredit.vim'
 Plugin 'Shougo/vimproc.vim'
 Plugin 'eagletmt/ghcmod-vim'
 "Plugin 'raichoo/haskell-vim'
- 
+
 "Plugin 'Lokaltog/vim-easymotion'
 "Plugin 'tpope/vim-fireplace'
 "Plugin 'kien/ctrlp.vim'
@@ -208,6 +208,8 @@ map k gk
 
 map H ^
 map L $
+
+cnoremap <expr> <C-f> getcmdpos()>strlen(getcmdline())?&cedit:"\<Lt>Right>"
 
 inoremap jk <Esc>
 inoremap JK <Esc>
@@ -416,7 +418,8 @@ noremap <leader>i :GhcModType<cr>
 
 let g:NERDCustomDelimiters = {
     \ 'haskell': { 'left': '-- ', 'leftAlt': '{- ', 'rightAlt': ' -}'},
-    \ 'lisp': { 'left': ';; '}
+    \ 'lisp': { 'left': ';; '},
+    \ 'obj': { 'left': '#'}
     \ }
 
 map <leader>cc <plug>NERDCommenterAlignBoth
@@ -547,7 +550,7 @@ au! BufRead,BufNewFile *.hs setlocal omnifunc=necoghc#omnifunc
 
 let g:slimv_swank_cmd = '! screen -dmS sbcl /usr/bin/sbcl --load /home/russ/.vim/bundle/slimv/slime/start-swank.lisp &'
 
-"let g:paredit_mode = 0
+let g:paredit_mode = 0
 let g:lisp_rainbow = 1
 let g:slimv_menu = 0
 

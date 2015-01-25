@@ -175,11 +175,13 @@ avoidMaster = W.modify' $ \c -> case c of
 
 -- {{{ Layouthook
 
-mylayoutHook =  smartBorders
-                . avoidStruts
-                . onWorkspace (wss!!1) vimlayout
-                $ onWorkspace (head wss) firefoxlayout
-                  mainlayout
+-- mylayoutHook =  smartBorders
+                -- . avoidStruts
+                -- . onWorkspace (wss!!1) vimlayout
+                -- $ onWorkspace (head wss) firefoxlayout
+                  -- mainlayout
+
+mylayoutHook = smartBorders . avoidStruts . onWorkspace (head wss) firefoxlayout $ vimlayout
 
 mainlayout = Mirror tiled ||| reflectHoriz columns ||| columns
     where
@@ -192,10 +194,10 @@ firefoxlayout = reflectHoriz ff ||| Full
     where
         ff = Tall  { tallNMaster = 1, tallRatio=4%5, tallRatioIncrement=3%100 }
 
-vimlayout =         Grid
-                ||| reflectHoriz Grid
-                ||| Tall { tallNMaster = 1, tallRatio=1%2, tallRatioIncrement=3%100 }
-                ||| Mirror Tall { tallNMaster = 1, tallRatio=3%5, tallRatioIncrement=3%100 }
+vimlayout = Grid
+          ||| reflectHoriz Grid
+          ||| Tall { tallNMaster = 1, tallRatio=1%2, tallRatioIncrement=3%100 }
+          ||| Mirror Tall { tallNMaster = 1, tallRatio=3%5, tallRatioIncrement=3%100 }
 
 columns = Tall { tallNMaster = 1, tallRatio=1%2, tallRatioIncrement=3%100 }
 
@@ -217,8 +219,7 @@ mywsso = filter ((=='0') . last) wss
 
 -- }}}
 
--- {{{
--- dzen/conky
+-- {{{ dzen/conky
 
 -- most of these settings are specific to my monitor setup
 -- 1920x1080 laptop left, larger 1680x1050 right
@@ -239,16 +240,18 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-140-*-*-*-*-*-*' "
 
 -- {{{ Scratchpad
 
-scratchpads = 
-  [ NS "floatterm" (roxterm ++ "floatterm") ( title =? "floatterm") rect
-  , NS "floattermleft" (roxterm ++ "floattermleft") ( title =? "floattermleft") rectleft
-  , NS "cmus" (xterm ++ "cmus -e ~/bin/cmus.sh") ( title =? "cmus") (tunes 0.5)
-  , NS "notepad" "exec gvim --servername notepad -f --role notepad ~/Documents/notepad" ( role =? "notepad") rect
-  , NS "irssi" (roxtermscreen ++ "irssi -e ~/bin/irssi.sh") (title =? "irssi") (tunes 0.6)
+scratchpads =
+  [ NS "floatterm" (roxterm ++ "floatterm") (title =? "floatterm") rect
+  , NS "floattermleft" (roxterm ++ "floattermleft") (title =? "floattermleft") rectleft
+  , NS "cmus" (xterm ++ "cmus -e ~/bin/cmus.sh") (title =? "cmus") (tunes 0.5)
+  -- , NS "notepad" "exec gvim --servername notepad -f --role notepad ~/Documents/notepad" (role =? "notepad") rect
+  , NS "notepad" "exec emacs --name notepad ~/Documents/notepad.org" (title =? "notepad") rect
+  , NS "irssi" (roxtermscreen ++ "irssi -e ~/bin/irssi.sh") (title =? "irssi") recttall
   ]
   where tunes         = customFloating . W.RationalRect 0 0 1
         rect          = customFloating $ W.RationalRect 0 0 0.5 0.55
         rectleft      = customFloating $ W.RationalRect 0.5 0 0.5 0.55
+        recttall      = customFloating $ W.RationalRect 0 0 0.5 1
         roxterm       = "roxterm --separate --profile=scratchpad -T "
         roxtermscreen = "roxterm --separate --profile=irc -T "
         xterm         ="xterm -xrm \"xterm*allowTitleOps: false\" -T "
@@ -258,13 +261,13 @@ scratchpadBinds =
   [ ("M-c"  , namedScratchpadAction scratchpads "cmus")
   , ("<F1>" , namedScratchpadAction scratchpads "floatterm")
   , ("<F2>" , namedScratchpadAction scratchpads "notepad")
-  , ("<F3>" , namedScratchpadAction scratchpads "irssi")
+  -- , ("<F3>" , namedScratchpadAction scratchpads "irssi")
   -- , ("<Insert>" , namedScratchpadAction scratchpads "floattermleft")
   , ("M-<F1>" , namedScratchpadAction scratchpads "floattermleft")
   , ("M-]"  , withFocused (keysResizeWindow (0,60) (1,0)))
   , ("M-["  , withFocused (keysResizeWindow (0,-60) (1,0)))
-  , ("M-S-]"  , withFocused (keysResizeWindow (272,0) (0,0)))
-  , ("M-S-["  , withFocused (keysResizeWindow (-270,0) (0,0)))
+  , ("M-S-]"  , withFocused (keysResizeWindow (60,0) (0,0)))
+  , ("M-S-["  , withFocused (keysResizeWindow (-60,0) (0,0)))
   , ("M-<Up>"  , withFocused (keysMoveWindow (0,-100)))
   , ("M-<Down>"  , withFocused (keysMoveWindow (0,100)))
   , ("M-<Right>"  , withFocused (keysMoveWindow (100,0)))
@@ -406,6 +409,7 @@ mykeysP =
         --, ("M-t" , spawn "terminator")
             --TODO: stop from launching more windows
         , ("M-g" , singlespawn "Firefox" "firefox")
+        , ("M-S-g" , spawn "chromium")
         --, ("M-g" , singlespawn "Firefox" "firefox-beta-bin")
         , ("M-e" , spawn "xterm -e ranger" )
         , ("M-s" , spawn gvimcmd )
@@ -439,8 +443,8 @@ mykeysP =
         , ("M-<Delete>"   , spawn "~/bin/lockscreen.sh")
         , ("M-S-q" , spawn $ "pkill dzen2; sleep 1; " ++ myrestart )
         , ("M-S-<Delete>" , io exitSuccess)
-        --, ("<F8>" , spawn "~/bin/autoclick.sh" )
-        --, ("<F9>" , spawn "pkill clicker.sh" )
+        -- , ("<F8>" , spawn "~/bin/autoclick.sh" )
+        , ("<F9>" , spawn "pkill clicker.sh" )
         , ("M-S-g" , nextEmpty)
         ] ++
         scratchpadBinds
