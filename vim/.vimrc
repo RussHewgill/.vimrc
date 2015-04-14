@@ -17,7 +17,8 @@ Plugin 'eagletmt/neco-ghc'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
 Plugin 'Valloric/YouCompleteMe'
-Plugin 'bruno-/vim-husk'
+"Plugin 'bruno-/vim-husk'
+Plugin 'tpope/vim-rsi'
 Plugin 'kana/vim-textobj-user'
 Plugin 'nelstrom/vim-textobj-rubyblock'
 Plugin 'fs111/pydoc.vim'
@@ -210,6 +211,7 @@ map H ^
 map L $
 
 cnoremap <expr> <C-f> getcmdpos()>strlen(getcmdline())?&cedit:"\<Lt>Right>"
+noremap <C-x><C-c> :qa<CR>
 
 inoremap jk <Esc>
 inoremap JK <Esc>

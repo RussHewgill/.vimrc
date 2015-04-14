@@ -23,7 +23,12 @@ redshift -O 5200
 
 wmname LG3D
 
-exec xmonad
+if [[ "$1" ]]
+then
+    exec startxfce4
+else
+    exec xmonad
+fi
 #exec i3
 
 ##### not needed ?

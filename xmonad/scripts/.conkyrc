@@ -3,7 +3,7 @@ background no
 out_to_console yes
 out_to_x no
 double_buffer yes
-update_interval 1.0
+update_interval 1
 total_run_times 0
 use_spacer none
 
@@ -16,7 +16,7 @@ TEXT
 ${exec ~/bin/tunes.sh} \
 ^ca()^ca()\
 ^fg(\#5c5c5c)^r(2x34)^bg(\#dddddd)^fg(\#171616)\
-${execi 2 ~/bin/musicprogress.sh}\
+${execi 3 ~/bin/musicprogress.sh}\
 ^bg()^fg(\#5c5c5c)^r(2x34)^fg() \
 ${exec ~/bin/volume.sh} \
 ^fg(\#5c5c5c)^r(2x34)^fg() \

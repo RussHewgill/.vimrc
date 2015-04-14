@@ -1,5 +1,3 @@
-"hg7108
-
 loadplugins '\.(js|penta)$'
 group user
 
@@ -41,10 +39,10 @@ map -b p :tabopen w <S-Insert><cr>
 map -b -modes=n,v w :b<space>
 
 "Scrolling
-map -count -modes=n,v j -b <count>5j
-map -count -modes=n,v J -b <count>gt
-map -count -modes=n,v k -b <count>5k
-map -count -modes=n,v K -b <count>gT
+map -count j -b <count>5j
+map -count J -b <count>gt
+map -count k -b <count>5k
+map -count K -b <count>gT
 map -modes=n,v -b d <C-d>
 map -modes=n,v -b u <C-u>
 

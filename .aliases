@@ -13,7 +13,6 @@ alias :q='exit'
 alias lisp='rlwrap ccl'
 alias less='less -asix4'
 alias racket='rlwrap racket'
-alias ff='firefox -new-tab'
 alias tmux='tmux -2'
 alias clisp='clear; clisp --silent'
 alias rot13="tr '[A-Za-z]' '[N-ZA-Mn-za-m]'"

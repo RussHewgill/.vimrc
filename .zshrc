@@ -99,6 +99,7 @@ PROMPT='%{$fg[white]%}%n@%M%{$reset_color%} [%?] [%{$fg[green]%}%~%{$reset_color
 #RPROMPT='%M'
 
 preexec () { print -Pn '\e]2;$2\a' }
+#preexec () { print -Pn '\e]2;'$(pwd | sed "s#$HOME#~#")'\a' }
 
 # Keybinds {{{
 typeset -A key
@@ -160,8 +161,15 @@ export SAVEHIST=10000000
 export EDITOR='vim'
 export JAVA_HOME=/opt/java/
 export LANG=en_US.UTF-8
-export PATH=$HOME/bin:/usr/local/bin:$PATH:/home/russ/.cabal/bin:/home/russ/.gem/ruby/2.1.0/bin
+export PATH=$HOME/bin:/usr/local/bin:$PATH:$HOME/.cabal/bin:$HOME/.gem/ruby/2.1.0/bin
+export PATH=$PATH:$HOME/code/builds/ghc-mod/dist/dist-sandbox-bc294bdd/build/ghc-mod
+export PATH=$PATH:$HOME/code/builds/ghc-mod/dist/dist-sandbox-bc294bdd/build/ghc-modi
 export JAVA_HOME=
+export LESS="-F -g -i -M -R -S -w -X -z-4 --jump-target=.5"
+
+##Mplayer tearing
+#export __GL_YIELD="USLEEP"
+#export __GL_THREADED_OPTIMIZATIONS=1
 
 # }}}
 
@@ -174,6 +182,15 @@ source ~/.config/zextras
 function mcd () {
     mkdir -p "$1"
     cd "$1"
+}
+
+function ff () {
+    frefox -new-tab "$1"
+}
+
+function lcd () {
+    cd "$1"
+    ls
 }
 
 function man() {

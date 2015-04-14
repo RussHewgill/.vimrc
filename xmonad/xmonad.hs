@@ -143,6 +143,7 @@ mymanagehook = composeAll . concat $
     , [className =? "Gvim"                                  --> doF W.swapMaster ]
     , [className =? "Gmrun"                                 --> doSideFloat CW   ]
     , [title =? "floatme"                                   --> doFloat          ]
+    , [title =? "GLFW Window"                               --> doFloat          ]
     , [title =? "Terminator Preferences"                    --> doFloat          ]
     , [className =? "Xmessage"                              --> doFloat          ]
     , [className =? "Gsimplecal"            --> placeHook (withGaps (0,0,30,0) $ underMouse (0,0)) ]
@@ -153,6 +154,7 @@ mymanagehook = composeAll . concat $
     {-, [(fmap (isInfixOf c) title <&&> (qnot isDialog))    --> doF avoidMaster | c <- hiPriority ]-}
     , [className =? "Gimp"                                  --> doShift (wss!!4) ]
     , [fmap (isInfixOf c) title                             --> doF W.focusUp | c <- pwds ]
+    , [isFullscreen --> doFullFloat ]
     ]
     {-<+>-}
     {-composeOne [  ]-}
@@ -242,14 +244,17 @@ dzenfont = " -fn '-*-dejavu sans-*-*-*-*-*-140-*-*-*-*-*-*' "
 
 scratchpads =
   [ NS "floatterm" (roxterm ++ "floatterm") (title =? "floatterm") rect
-  , NS "floattermleft" (roxterm ++ "floattermleft") (title =? "floattermleft") rectleft
+  -- , NS "floattermleft" (roxterm ++ "floattermleft") (title =? "floattermleft") rectleft
+
   , NS "cmus" (xterm ++ "cmus -e ~/bin/cmus.sh") (title =? "cmus") (tunes 0.5)
-  -- , NS "notepad" "exec gvim --servername notepad -f --role notepad ~/Documents/notepad" (role =? "notepad") rect
-  , NS "notepad" "exec emacs --name notepad ~/Documents/notepad.org" (title =? "notepad") rect
+  -- , NS "notepad" "exec emacs --name notepad ~/code/projects/spacegame/org/notepad.org" (title =? "notepad") rectnote
+  , NS "notepad" ("exec emacs --name notepad " ++) file (title =? "notepad") rectnote
+  -- , NS "notepad" notepadcmd (title =? "notepad") rectnote
   , NS "irssi" (roxtermscreen ++ "irssi -e ~/bin/irssi.sh") (title =? "irssi") recttall
   ]
   where tunes         = customFloating . W.RationalRect 0 0 1
         rect          = customFloating $ W.RationalRect 0 0 0.5 0.55
+        rectnote      = customFloating $ W.RationalRect 0 0 0.35 0.67
         rectleft      = customFloating $ W.RationalRect 0.5 0 0.5 0.55
         recttall      = customFloating $ W.RationalRect 0 0 0.5 1
         roxterm       = "roxterm --separate --profile=scratchpad -T "
@@ -257,21 +262,37 @@ scratchpads =
         xterm         ="xterm -xrm \"xterm*allowTitleOps: false\" -T "
         role          = stringProperty "WM_WINDOW_ROLE"
 
+        file = "~/Documents/notepad.org"
+
+        -- notepadcmd    = "exec emacs --name notepad --eval \"(open-in-tabs '("
+        --                 ++ notepadfiles ++ ")\""
+        -- notepadfiles  = unwords
+        --                   [ "\\\"~/Documents/notepad.org\\\""
+        --                   , "\\\"~/code/projects/spacegame/org/notepad.org\\\""]
+
+
 scratchpadBinds =
   [ ("M-c"  , namedScratchpadAction scratchpads "cmus")
   , ("<F1>" , namedScratchpadAction scratchpads "floatterm")
   , ("<F2>" , namedScratchpadAction scratchpads "notepad")
   -- , ("<F3>" , namedScratchpadAction scratchpads "irssi")
   -- , ("<Insert>" , namedScratchpadAction scratchpads "floattermleft")
-  , ("M-<F1>" , namedScratchpadAction scratchpads "floattermleft")
+  -- , ("M-<F1>" , namedScratchpadAction scratchpads "floattermleft")
+  , ("M-<F1>" , namedScratchpadAction scratchpads "irssi")
   , ("M-]"  , withFocused (keysResizeWindow (0,60) (1,0)))
+  -- , ("M-M1-]"  , withFocused (keysResizeWindow (0,30) (1,0)))
+  , ("M-M1-]"  , withFocused (\w -> tileWindow w (Rectangle 1920 0 1920 1080) >> float w))
   , ("M-["  , withFocused (keysResizeWindow (0,-60) (1,0)))
   , ("M-S-]"  , withFocused (keysResizeWindow (60,0) (0,0)))
   , ("M-S-["  , withFocused (keysResizeWindow (-60,0) (0,0)))
-  , ("M-<Up>"  , withFocused (keysMoveWindow (0,-100)))
-  , ("M-<Down>"  , withFocused (keysMoveWindow (0,100)))
-  , ("M-<Right>"  , withFocused (keysMoveWindow (100,0)))
-  , ("M-<Left>"  , withFocused (keysMoveWindow (-100,0)))
+  -- , ("M-<Up>"  , withFocused (keysMoveWindow (0,-100)))
+  -- , ("M-<Down>"  , withFocused (keysMoveWindow (0,100)))
+  -- , ("M-<Right>"  , withFocused (keysMoveWindow (100,0)))
+  -- , ("M-<Left>"  , withFocused (keysMoveWindow (-100,0)))
+  , ("M-M1-k"  , withFocused (keysMoveWindow (0,-100)))
+  , ("M-M1-j"  , withFocused (keysMoveWindow (0,100)))
+  , ("M-M1-l"  , withFocused (keysMoveWindow (100,0)))
+  , ("M-M1-h"  , withFocused (keysMoveWindow (-100,0)))
   ]
 
 -- }}}
@@ -437,6 +458,10 @@ mykeysP =
         , ("M-f" , withFocused $ windows . W.sink)
         , ("M1-<F4>" , kill)
 
+        , ("M-S-M1-s", withFocused $ windows . W.delete )
+        , ("M-<Space>", spawn "xdotool mousemove_relative 0 -1000")
+        , ("M-S-<Space>", sendMessage NextLayout)
+
             -- lockscreen just picks a random wallpaper from a dual monitor
             -- folder and starts i3lock
         , ("M-<Pause>" , spawn "~/bin/lockscreen.sh && systemctl suspend")
@@ -444,7 +469,7 @@ mykeysP =
         , ("M-S-q" , spawn $ "pkill dzen2; sleep 1; " ++ myrestart )
         , ("M-S-<Delete>" , io exitSuccess)
         -- , ("<F8>" , spawn "~/bin/autoclick.sh" )
-        , ("<F9>" , spawn "pkill clicker.sh" )
+        -- , ("<F9>" , spawn "pkill clicker.sh" )
         , ("M-S-g" , nextEmpty)
         ] ++
         scratchpadBinds
@@ -458,6 +483,7 @@ button9 = 9
 
 mymousebuttons =
         [
+        ((noModMask, button8), const $ spawn "xdotool key F20")
         --  ((noModMask,button9) , const $ spawn "~/bin/autoclick.sh" )
         --, ((noModMask,button8) , const $ spawn "~/bin/autoclick.sh" )
         ]
